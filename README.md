@@ -1,4 +1,4 @@
-# Service-Oriented architectures
+# Service-oriented architectures
 
 Простая социальная сеть, цель которой продемострировать всю силу паттернов СОА. Ткемаладзе Илья Нодариевич, БПМИ226.
 
