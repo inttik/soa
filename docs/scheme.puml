@@ -1,0 +1,95 @@
+@startuml scheme
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define column(x) <color:#efefef><&media-record></color> x
+!define table(x) entity x << (T, white) >>
+
+package "Posts service" #faf3b6{
+
+  table(Posts) #Khaki{
+    primary_key(post_id): UUID
+    --
+    column(content): TEXT
+    column(image_link): VARCHAR(255)
+    column(publish_date): DATETIME
+    column(last_modify): DATATIME
+    foreign_key(author_id): UUID
+  }
+  table(Comments) #khaki {
+    primary_key(comment_id): UUID
+    --
+    column(content): TEXT
+    column(publish_date): DATETIME
+    column(last_modify): DATATIME
+    foreign_key(author_id): UUID
+    foreign_key(post_id): UUID
+  }
+  table(Replies) #khaki {
+    primary_key(id): UUID
+    --
+    foreign_key(comment_id): UUID
+    foreign_key(reply_to): UUID
+  }
+  Posts <.. Comments: " post_id"
+  Replies <.. Comments: " comment_id"
+  Replies ..> Comments: " reply_to"
+
+}
+
+package "Stats service" #PaleGreen {
+  table(Watches) #MediumSpringGreen {
+    primary_key(id): UUID
+    --
+    foreign_key(user_id): UUID
+    foreign_key(post_id): UUID
+  }
+  table(Likes) #MediumSpringGreen {
+    primary_key(id): UUID
+    --
+    foreign_key(user_id): UUID
+    foreign_key(post_id): UUID
+  }
+  table(PostsStats) #MediumSpringGreen {
+    primary_key(post_id): UUID
+    --
+    column(watch_count): INT
+    column(like_count): INT
+    column(comment_count): INT
+    column(publish_date): DATETIME
+    column(last_modify): DATETIME
+  }
+}
+
+package "Users service" #LightSalmon {
+  table(UserInfo) #Salmon{
+    primary_key(user_id): UUID
+    --
+    column(login): VARCHAR(255)
+    column(pass): VARCHAR(255)
+    column(email): VARCHAR(255)
+    column(email_confirm): BOOL
+    column(reg_date): DATETIME
+  }
+
+  table(UserProfile) #Salmon{
+    primary_key(user_id): UUID
+    --
+    column(first_name): VARCHAR(255)
+    column(last_name): VARCHAR(255)
+    column(image_link): VARCHAR(255)
+    column(gender): VARCHAR(255)
+    column(birth_date): DATETIME
+  }
+
+  table(Friends) #Salmon{
+    primary_key(id): UUID
+    --
+    foreign_key(user_a): UUID
+    foreign_key(user_b): UUID
+  }
+  UserInfo <.. UserProfile: " user_id"
+  UserInfo <.. Friends : " user_b"
+  UserInfo ..> Friends : " user_a"
+
+}
+@enduml
