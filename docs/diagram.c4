@@ -1,0 +1,88 @@
+specification {
+    element person {
+        style {
+            shape person
+            color green
+        }
+    }
+    element softwareSystem
+    element component
+}
+
+model {
+  user = person 'Пользователь' 'Пользователь SocNet'
+
+  socNet = softwareSystem 'Social Network' {
+    gateway = component 'Gateway' {
+        description 'Перенаправление запросов'
+        technology 'NGix'
+    }
+    usersService = component 'Users service' {
+        description 'Управление авторизацией и данными о пользователях'
+        technology 'технология: ???'
+    }
+    postsSevice = component 'Posts service' {
+        description 'Управление постами и комментариями'
+        technology 'технология: ???'
+    }
+    statsService = component 'Stats service' {
+        description 'Сбор статистики постов'
+        technology 'технология: ???'
+    }
+
+    clickhouseDb = component 'ClickHouse' {
+        description 'Хранит статистику просмотров и лайков'
+        technology 'Database'
+        style {
+            shape cylinder
+        }
+    }
+
+    kafka = component "Kafka" {
+      description "Обмен событиями между сервисами"
+      technology "Message Broker"
+      style {
+        shape queue
+      }
+    }
+
+    postsPostgress = component 'PostgreSQL' {
+        description 'Хранит информацию о постах и комментариях'
+        technology 'Database'
+        style {
+            shape cylinder
+        }
+    }
+
+    usersPostgress = component 'PostgreSQL' {
+        description 'Хранит информацию о пользователях'
+        technology 'Database'
+        style {
+            shape cylinder
+        }
+    }
+  }
+
+  user -> gateway 'Использует' 'REST API'
+
+  gateway -> usersService 'Перенаправляет' 'JSON/HTTPS'
+  gateway -> postsSevice 'Перенаправляет' 'JSON/HTTPS'
+  gateway -> statsService 'Перенаправляет' 'JSON/HTTPS'
+
+  usersService -> kafka 'Публикует' 'events'
+  usersService -> statsService 'Взаимодействует' 'gRPC'
+  usersService -> usersPostgress 'Читает/Пишет' 'SQL'
+
+  postsSevice -> kafka 'Публикует' 'events'
+  postsSevice -> statsService 'Взаимодействует' 'gRPC'
+  postsSevice -> postsPostgress 'Читает/Пишет' 'SQL'
+
+  statsService -> kafka 'Подписывается' 'events' 
+  statsService -> clickhouseDb 'Читает/Пишет' 'SQL'
+}
+
+views {
+   view index {
+        include *
+    }
+}
