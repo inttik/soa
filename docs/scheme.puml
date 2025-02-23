@@ -112,8 +112,8 @@ package "Users service" #fcb295 {
   table(Friends) #Salmon{
     primary_key(id): UUID
     --
+    column(paired): BOOL
     column(friended_at): DATETIME
-    column(paired): DATETIME
     foreign_key(user_id): UUID
     foreign_key(friend_id): UUID
     foreign_key(group_id): UUID or NONE
