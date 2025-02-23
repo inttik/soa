@@ -6,7 +6,7 @@
 
 package "Posts service" #faf3b6{
 
-  table(Posts) #Khaki{
+  table(Posts) #f7ea77{
     primary_key(post_id): UUID
     --
     column(content): TEXT
@@ -15,7 +15,7 @@ package "Posts service" #faf3b6{
     column(last_modify): DATATIME
     foreign_key(author_id): UUID
   }
-  table(Comments) #khaki {
+  table(Comments) #f7ea77 {
     primary_key(comment_id): UUID
     --
     column(content): TEXT
@@ -24,7 +24,7 @@ package "Posts service" #faf3b6{
     foreign_key(author_id): UUID
     foreign_key(post_id): UUID
   }
-  table(Replies) #khaki {
+  table(Replies) #f7ea77 {
     primary_key(id): UUID
     --
     foreign_key(comment_id): UUID
@@ -40,34 +40,62 @@ package "Stats service" #PaleGreen {
   table(Watches) #MediumSpringGreen {
     primary_key(id): UUID
     --
+    column(at): DATETIME
     foreign_key(user_id): UUID
     foreign_key(post_id): UUID
   }
-  table(Likes) #MediumSpringGreen {
+  table(Reactions) #MediumSpringGreen {
     primary_key(id): UUID
     --
+    column(at): DATETIME
+    column(event): ENUM('like', 'dislike', 'remove')
     foreign_key(user_id): UUID
     foreign_key(post_id): UUID
   }
+  table(Friends) #MediumSpringGreen {
+    primary_key(id): UUID
+    --
+    column(at): DATETIME
+    column(event): ENUM('add', 'remove')
+    foreign_key(user_id): UUID
+    foreign_key(friend_id): UUID
+  }
+/'
   table(PostsStats) #MediumSpringGreen {
     primary_key(post_id): UUID
     --
     column(watch_count): INT
     column(like_count): INT
+    column(diskike_count): INT
     column(comment_count): INT
     column(publish_date): DATETIME
     column(last_modify): DATETIME
   }
+  table(UsersStats) #MediumSpringGreen {
+    primary_key(user_id)
+    --
+    column(watch_count): INT
+    column(like_count): INT
+    column(dislike_count): INT
+    column(posts_count): INT
+    column(reg_date): DATETIME
+  }
+  PostsStats <.. Reactions: " post_id"
+  UsersStats <.. Reactions: " user_id"
+  PostsStats <.. Watches: " post_id"
+  UsersStats <.. Watches: " user_id"
+'/
 }
 
-package "Users service" #LightSalmon {
+package "Users service" #fcb295 {
   table(UserInfo) #Salmon{
     primary_key(user_id): UUID
     --
     column(login): VARCHAR(255)
     column(pass): VARCHAR(255)
     column(email): VARCHAR(255)
-    column(email_confirm): BOOL
+    column(email_confirmed): BOOL
+    column(root): BOOL
     column(reg_date): DATETIME
   }
 
@@ -84,12 +112,26 @@ package "Users service" #LightSalmon {
   table(Friends) #Salmon{
     primary_key(id): UUID
     --
-    foreign_key(user_a): UUID
-    foreign_key(user_b): UUID
+    column(friended_at): DATETIME
+    column(paired): DATETIME
+    foreign_key(user_id): UUID
+    foreign_key(friend_id): UUID
+    foreign_key(group_id): UUID or NONE
+  }
+
+  table(Groups) #Salmon{
+    primary_key(group_id): UUID
+    --
+    column(name): VARCHAR(255)
+    column(recommend_posts): BOOL
+    column(hide_friends): BOOL
+    column(is_public_visible): BOOL
+    column(created_at): DATETIME
   }
   UserInfo <.. UserProfile: " user_id"
-  UserInfo <.. Friends : " user_b"
-  UserInfo ..> Friends : " user_a"
+  UserInfo <.. Friends: " user_id"
+  UserInfo ..> Friends: " friend_id"
+  Groups <.. Friends: " group_id"
 
 }
 @enduml

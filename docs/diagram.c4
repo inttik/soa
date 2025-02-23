@@ -15,7 +15,7 @@ model {
   socNet = softwareSystem 'Social Network' {
     gateway = component 'Gateway' {
         description 'Перенаправление запросов'
-        technology 'NGix'
+        technology 'NGinx'
     }
     usersService = component 'Users service' {
         description 'Управление авторизацией и данными о пользователях'
@@ -70,11 +70,9 @@ model {
   gateway -> statsService 'Перенаправляет' 'JSON/HTTPS'
 
   usersService -> kafka 'Публикует' 'events'
-  usersService -> statsService 'Взаимодействует' 'gRPC'
   usersService -> usersPostgress 'Читает/Пишет' 'SQL'
 
   postsSevice -> kafka 'Публикует' 'events'
-  postsSevice -> statsService 'Взаимодействует' 'gRPC'
   postsSevice -> postsPostgress 'Читает/Пишет' 'SQL'
 
   statsService -> kafka 'Подписывается' 'events' 
