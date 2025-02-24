@@ -5,12 +5,12 @@
 !define table(x) entity x << (T, white) >>
 
 package "Posts service" #faf3b6{
-
   table(Posts) #f7ea77{
     primary_key(post_id): UUID
     --
     column(content): TEXT
     column(image_link): VARCHAR(255)
+    column(friends_only): BOOL
     column(publish_date): DATETIME
     column(last_modify): DATATIME
     foreign_key(author_id): UUID
@@ -93,45 +93,33 @@ package "Users service" #fcb295 {
     --
     column(login): VARCHAR(255)
     column(pass): VARCHAR(255)
-    column(email): VARCHAR(255)
-    column(email_confirmed): BOOL
     column(root): BOOL
     column(reg_date): DATETIME
   }
-
   table(UserProfile) #Salmon{
     primary_key(user_id): UUID
     --
     column(first_name): VARCHAR(255)
     column(last_name): VARCHAR(255)
     column(image_link): VARCHAR(255)
-    column(gender): VARCHAR(255)
-    column(birth_date): DATETIME
+    column(email): VARCHAR(255)
+    column(email_confirmed): BOOL
+    column(last_modify): DATETIME
   }
-
   table(Friends) #Salmon{
     primary_key(id): UUID
     --
+    column(friend_alias): VARCHAR(255)
+    column(subscribe): BOOL
+    column(hide): BOOL
     column(paired): BOOL
     column(friended_at): DATETIME
+    column(last_modify): DATETIME
     foreign_key(user_id): UUID
     foreign_key(friend_id): UUID
-    foreign_key(group_id): UUID or NONE
   }
-
-  table(Groups) #Salmon{
-    primary_key(group_id): UUID
-    --
-    column(name): VARCHAR(255)
-    column(recommend_posts): BOOL
-    column(hide_friends): BOOL
-    column(is_public_visible): BOOL
-    column(created_at): DATETIME
-  }
-  UserInfo <.. UserProfile: " user_id"
+  UserInfo <..> UserProfile: " user_id"
   UserInfo <.. Friends: " user_id"
   UserInfo ..> Friends: " friend_id"
-  Groups <.. Friends: " group_id"
-
 }
 @enduml
