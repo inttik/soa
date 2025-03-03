@@ -1,0 +1,216 @@
+openapi: 3.1.0
+info:
+  title: Users service
+  description: Api for users control
+  version: 1.0.0
+paths: 
+  /register/v1:
+    description: Creating users
+    post:
+      summary: Register new user
+      description: Checks if user can be created and, if so, creates it and returns user_id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUserRequest" 
+            examples:
+              user:
+                value:
+                    login: login1231
+                    password: Qhfs32eWefs 
+                    email: email@gm.com
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+              examples: 
+                first:
+                  value: 00000000-0000-0000-0000-000000000000
+        400:
+          description: Provided arguments have incorrect format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+              examples:
+                badFormat:
+                  value: Login format is incorrect
+                alreadyExists:
+                  value: User with that login/email already exists
+        403:
+          description: Try to create root user, while not root
+        503:
+          description: Server is not available
+
+  /login/v1:
+    post:
+      summary: Authentication of user
+      description: Checks that you is the user and, if so, sets JWT token to cookies.
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loginUserRequest"
+            examples:
+              user:
+                value:
+                  login: login1231
+                  password: Qhfs32eWefs
+      responses: 
+        200:
+          description: Successfully logged in
+          headers:
+            Set-Cookie:
+              description: Sets jwt cookie
+              schema:
+                type: string
+                examples: 
+                  - "jwt=<...>"
+        400:
+          description: Bad format
+        404:
+          description: User not found
+        503:
+          description: Server is not available
+
+  /profile/v1/{user_id}:
+    get:
+      summary: Get user profile information
+      description: Get all user profile information.
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profileInfo"
+        404:
+          description: User not found
+        503: 
+          description: Server is not available
+    post:
+      summary: Update user profile
+      description: Check if user profile can be update by current user and, if so, updates it.
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Updated successfully, returns new information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profileInfo"
+        400: 
+          description: Bad format
+        401:
+          description: Unauthorized 
+        403:
+          description: Operation not allowed
+        404:
+          description: User not found
+
+
+
+components:
+  parameters:
+    userId:
+      name: user_id
+      in: path
+      required: true
+      schema:
+          type: string
+  schemas:
+    errorMessage:
+      type: string
+      description: A text message describing error
+    loginString:
+      type: string
+      maxLength: 255
+    passwordString:
+      type: string
+      format: password
+      description: hashed value of (password + salt)
+      maxLength: 255
+    emailString:
+      type: string
+      format: email
+      maxLength: 255
+    rootFlag:
+      type: boolean
+      default: false
+    nameString:
+      type: string
+      maxLength: 255
+    linkString:
+      type: string
+      format: uri
+      maxLength: 255
+    birthString:
+      type: string
+      format: date
+      maxLength: 20
+    telephoneString:
+      type: string
+      maxLength: 20
+      examples:
+        - "8-900-000-00-00"
+    createUserRequest:
+      type: object
+      required:
+      - login
+      - password
+      - email
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        password:
+          $ref: "#/components/schemas/passwordString"
+        email:
+          $ref: "#/components/schemas/emailString"
+        root:
+          $ref: "#/components/schemas/rootFlag"
+    loginUserRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        password:
+          $ref: "#/components/schemas/passwordString"
+    profileInfo:
+      type: object
+      required:
+        - login
+        - email
+        - root
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        email:
+          $ref: "#/components/schemas/emailString"
+        root:
+          $ref: "#/components/schemas/rootFlag"
+        firstName:
+          $ref: "#/components/schemas/nameString"
+        lastName:
+          $ref: "#/components/schemas/nameString"
+        imageLink:
+          $ref: "#/components/schemas/linkString"
+        birthDate:
+          $ref: "#/components/schemas/birthString"
+        telephone:
+          $ref: "#/components/schemas/telephoneString"
+    
+
+

@@ -102,16 +102,17 @@ package "Users service" #fcb295 {
     column(first_name): VARCHAR(255)
     column(last_name): VARCHAR(255)
     column(image_link): VARCHAR(255)
+    column(birth_date): DATETIME
+    column(telephone): VARCHAR(20)
     column(email): VARCHAR(255)
-    column(email_confirmed): BOOL
     column(last_modify): DATETIME
   }
   table(Friends) #Salmon{
     primary_key(id): UUID
     --
     column(friend_alias): VARCHAR(255)
-    column(subscribe): BOOL
-    column(hide): BOOL
+    column(subscribed): BOOL
+    column(hidden): BOOL
     column(paired): BOOL
     column(friended_at): DATETIME
     column(last_modify): DATETIME
