@@ -27,11 +27,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                format: uuid
-              examples: 
-                first:
-                  value: 00000000-0000-0000-0000-000000000000
+                $ref: "#/components/schemas/userId"
         400:
           description: Provided arguments have incorrect format
           content:
@@ -40,9 +36,9 @@ paths:
                 $ref: "#/components/schemas/errorMessage"
               examples:
                 badFormat:
-                  value: Login format is incorrect
+                  value: Login format is incorrect.
                 alreadyExists:
-                  value: User with that login/email already exists
+                  value: User with that login/email already exists.
         403:
           description: Try to create root user, while not root
         503:
@@ -102,6 +98,17 @@ paths:
       description: Check if user profile can be update by current user and, if so, updates it.
       parameters:
         - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/profileUpdate"
+            examples:
+              nameUpdate:
+                value: 
+                  firstName: "Ivan"
+                  lastName: "Ivanov"
       responses:
         200:
           description: Updated successfully, returns new information
@@ -117,8 +124,83 @@ paths:
           description: Operation not allowed
         404:
           description: User not found
-
-
+        503: 
+          description: Server is not available
+  /friends/v1/{user_id}:
+    get:
+      summary: Get friends of user
+      description: |
+        Returns all public friends_id of user.
+        If client has private access to user_id (client is
+        root or is user_id), then friend aliasas are returned
+        as well as (if required) friend pairs metadata.
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - name: with_aliasas
+          description: >
+            if set and if true, returns all friends with aliases
+          in: header
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Friends information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/friendList"
+        400:
+          description: Bad format
+        403:
+          description: Operation not allowed
+        404:
+          description: User not found
+        503: 
+          description: Server is not available
+    post:
+      summary: Update friends state of user.
+      description: Add, update, or remove friend of user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/friendModify"
+      responses:
+        200:
+          description: Successfully updated. Return current friend state
+          content:
+            application/json:
+              schema:
+                type: object
+                description: |
+                  If add/modify request, contains current information.
+                  If delete request,  contains nothing.
+                properties:
+                  friend:
+                    $ref: "#/components/schemas/friendObject"
+        400:
+          description: Bad format
+        401:
+          description: Unauthorized
+        403:
+          description: Operation not allowed
+        404:
+          description: User of friend not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+              examples:
+                UserNotFound:
+                  value: User {user_id} not found.
+                FriendNotFound:
+                  value: Friend {friend_id} not found.
+        503: 
+          description: Server is not available
 
 components:
   parameters:
@@ -127,11 +209,14 @@ components:
       in: path
       required: true
       schema:
-          type: string
+          $ref: "#/components/schemas/userId"
   schemas:
     errorMessage:
       type: string
       description: A text message describing error
+    userId:
+      type: string
+      format: uuid
     loginString:
       type: string
       maxLength: 255
@@ -163,6 +248,15 @@ components:
       maxLength: 20
       examples:
         - "8-900-000-00-00"
+    friendAliasString:
+      type: string
+      maxLength: 255
+    friendSubscribedFlag:
+      type: boolean
+    friendHiddenFlag:
+      type: boolean
+    friendPairedFlag:
+      type: boolean
     createUserRequest:
       type: object
       required:
@@ -211,6 +305,55 @@ components:
           $ref: "#/components/schemas/birthString"
         telephone:
           $ref: "#/components/schemas/telephoneString"
-    
-
-
+    profileUpdate:
+      type: object
+      properties:
+        email:
+          $ref: "#/components/schemas/emailString"
+        root:
+          $ref: "#/components/schemas/rootFlag"
+        firstName:
+          $ref: "#/components/schemas/nameString"
+        lastName:
+          $ref: "#/components/schemas/nameString"
+        imageLink:
+          $ref: "#/components/schemas/linkString"
+        birthDate:
+          $ref: "#/components/schemas/birthString"
+        telephone:
+          $ref: "#/components/schemas/telephoneString"
+    friendObject:
+      type: object
+      required:
+        - friend_id
+      properties:
+        friend_id:
+          $ref: "#/components/schemas/userId"
+        alias:
+          $ref: "#/components/schemas/friendAliasString"
+        subscibed:
+          $ref: "#/components/schemas/friendSubscribedFlag"
+        hidden:
+          $ref: "#/components/schemas/friendHiddenFlag"
+        paired:
+          $ref: "#/components/schemas/friendPairedFlag"
+    friendList:
+      type: array
+      items:
+        $ref: "#/components/schemas/friendObject"
+    friendModify:
+      type: object  
+      required:
+        - friend_id
+      properties:
+        friend_id:
+          $ref: "#/components/schemas/userId"
+        alias:
+          $ref: "#/components/schemas/friendAliasString"
+        subscibed:
+          $ref: "#/components/schemas/friendSubscribedFlag"
+        hidden:
+          $ref: "#/components/schemas/friendHiddenFlag"
+        delete:
+          type: boolean  
+          description: if true, remove friend
