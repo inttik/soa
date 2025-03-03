@@ -133,16 +133,9 @@ paths:
         Returns all public friends_id of user.
         If client has private access to user_id (client is
         root or is user_id), then friend aliasas are returned
-        as well as (if required) friend pairs metadata.
+        as well as friend pairs metadata.
       parameters:
         - $ref: "#/components/parameters/userId"
-        - name: with_aliasas
-          description: >
-            if set and if true, returns all friends with aliases
-          in: header
-          required: false
-          schema:
-            type: boolean
       responses:
         200:
           description: Friends information
