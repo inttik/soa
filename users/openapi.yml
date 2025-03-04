@@ -4,9 +4,9 @@ info:
   description: Api for users control
   version: 1.0.0
 servers:
-  - url: http://users.service/
+  - url: http://users.service/v1/
 paths: 
-  /register/v1:
+  /register:
     description: Creating users
     post:
       summary: Register new user
@@ -41,8 +41,14 @@ paths:
           description: Try to create root user, while not root
         503:
           description: Server is not available
+        'default':
+          description: An unexpected error occurred
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
 
-  /login/v1:
+  /login:
     post:
       summary: Authentication of user
       description: Checks that you is the user and, if so, returns JWT token.
@@ -90,8 +96,14 @@ paths:
           description: User not found
         503:
           description: Server is not available
+        'default':
+          description: An unexpected error occurred
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
 
-  /profile/v1/{user_id}:
+  /profile/{user_id}:
     get:
       summary: Get user profile information
       description: Get all user profile information.
@@ -110,6 +122,12 @@ paths:
           description: User not found
         503: 
           description: Server is not available
+        'default':
+          description: An unexpected error occurred
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update user profile
       description: Check if user profile can be update by current user and, if so, updates it.
@@ -145,7 +163,13 @@ paths:
           description: User not found
         503: 
           description: Server is not available
-  /friends/v1/{user_id}:
+        'default':
+          description: An unexpected error occurred
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+  /friends/{user_id}:
     get:
       summary: Get friends of user
       description: |
@@ -172,6 +196,12 @@ paths:
           description: User not found
         503: 
           description: Server is not available
+        'default':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update friends state of user.
       description: Add, update, or remove friend of user
@@ -217,6 +247,12 @@ paths:
                   value: Friend {friend_id} not found.
         503: 
           description: Server is not available
+        'default':
+          description: An unexpected error occurred
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
 
 components:
   securitySchemes:
