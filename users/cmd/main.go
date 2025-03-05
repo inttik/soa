@@ -9,7 +9,10 @@ import (
 
 func main() {
 	service := handler.NewService()
-	security := handler.NewSecurityHandler()
+	security, err := handler.NewSecurityHandler()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	srv, err := api.NewServer(&service, &security)
 	if err != nil {

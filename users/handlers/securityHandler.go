@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"log"
+	jwttokens "users/internal/jwt_token"
 	api "users/oas"
 
 	"github.com/google/uuid"
@@ -20,14 +21,20 @@ type userMetadata struct {
 }
 
 type securityHandler struct {
+	jwt jwttokens.JWTValidator
 }
 
-func NewSecurityHandler() securityHandler {
-	return securityHandler{}
+func NewSecurityHandler() (securityHandler, error) {
+	jwt, err := jwttokens.NewHandler()
+	if err != nil {
+		return securityHandler{}, err
+	}
+	return securityHandler{jwt: jwt}, nil
 }
 
 func (*securityHandler) HandleBearerHttpAuthentication(ctx context.Context, operationName api.OperationName, t api.BearerHttpAuthentication) (context.Context, error) {
 	log.Println("auth handler!")
+	log.Println(t)
 	user_metadata := userMetadata{
 		root:    true,
 		user_id: uuid.New(),

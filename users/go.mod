@@ -20,6 +20,7 @@ require (
 	github.com/go-faster/yaml v0.4.6 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
