@@ -3,17 +3,12 @@
 package oas
 
 import (
-	"fmt"
 	"io"
 	"net/url"
 	"time"
 
 	"github.com/google/uuid"
 )
-
-func (s *ErrorMessageStatusCode) Error() string {
-	return fmt.Sprintf("code %d: %+v", s.StatusCode, s.Response)
-}
 
 type BearerHttpAuthentication struct {
 	Token string
@@ -82,34 +77,6 @@ func (s *CreateUserRequest) SetRoot(val OptRootFlag) {
 type DateString time.Time
 
 type EmailString string
-
-type ErrorMessage string
-
-// ErrorMessageStatusCode wraps ErrorMessage with StatusCode.
-type ErrorMessageStatusCode struct {
-	StatusCode int
-	Response   ErrorMessage
-}
-
-// GetStatusCode returns the value of StatusCode.
-func (s *ErrorMessageStatusCode) GetStatusCode() int {
-	return s.StatusCode
-}
-
-// GetResponse returns the value of Response.
-func (s *ErrorMessageStatusCode) GetResponse() ErrorMessage {
-	return s.Response
-}
-
-// SetStatusCode sets the value of StatusCode.
-func (s *ErrorMessageStatusCode) SetStatusCode(val int) {
-	s.StatusCode = val
-}
-
-// SetResponse sets the value of Response.
-func (s *ErrorMessageStatusCode) SetResponse(val ErrorMessage) {
-	s.Response = val
-}
 
 type FriendAliasString string
 
@@ -1268,7 +1235,6 @@ func (*ProfileInfo) profileUserIDPostRes() {}
 // Ref: #/components/schemas/profileUpdate
 type ProfileUpdate struct {
 	Email     OptEmailString     `json:"email"`
-	Root      OptRootFlag        `json:"root"`
 	FirstName OptNameString      `json:"firstName"`
 	LastName  OptNameString      `json:"lastName"`
 	ImageLink OptLinkString      `json:"imageLink"`
@@ -1279,11 +1245,6 @@ type ProfileUpdate struct {
 // GetEmail returns the value of Email.
 func (s *ProfileUpdate) GetEmail() OptEmailString {
 	return s.Email
-}
-
-// GetRoot returns the value of Root.
-func (s *ProfileUpdate) GetRoot() OptRootFlag {
-	return s.Root
 }
 
 // GetFirstName returns the value of FirstName.
@@ -1314,11 +1275,6 @@ func (s *ProfileUpdate) GetTelephone() OptTelephoneString {
 // SetEmail sets the value of Email.
 func (s *ProfileUpdate) SetEmail(val OptEmailString) {
 	s.Email = val
-}
-
-// SetRoot sets the value of Root.
-func (s *ProfileUpdate) SetRoot(val OptRootFlag) {
-	s.Root = val
 }
 
 // SetFirstName sets the value of FirstName.

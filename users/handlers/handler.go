@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 
-	api "users/oas"
+	"users/oas"
 
 	"github.com/google/uuid"
 )
@@ -19,47 +19,60 @@ func NewService() userService {
 	return userService{id: 0}
 }
 
-func (*userService) FriendsUserIDGet(ctx context.Context, params api.FriendsUserIDGetParams) (api.FriendsUserIDGetRes, error) {
+func (*userService) FriendsUserIDGet(ctx context.Context, params oas.FriendsUserIDGetParams) (oas.FriendsUserIDGetRes, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (*userService) FriendsUserIDPost(ctx context.Context, req *api.FriendModify, params api.FriendsUserIDPostParams) (api.FriendsUserIDPostRes, error) {
+func (*userService) FriendsUserIDPost(ctx context.Context, req *oas.FriendModify, params oas.FriendsUserIDPostParams) (oas.FriendsUserIDPostRes, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (*userService) LoginPost(ctx context.Context, req *api.LoginUserRequest) (api.LoginPostRes, error) {
-	token := api.JwtToken{}
-	user_id := api.UserId{}
+func (*userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) (oas.LoginPostRes, error) {
+	token := oas.JwtToken{}
+	user_id := oas.UserId{}
 
-	uid := uuid.New()
-	value, _ := json.Marshal(uid)
-	user_id.UnmarshalJSON(value)
+	user_metadata := ctx.Value(USER_METADATA_KEY)
+	if user_metadata == nil {
+		fmt.Println("Not logined")
+	} else {
+		user_id = oas.UserId(user_metadata.(userMetadata).user_id)
+		fmt.Println("Logined as", user_id)
+	}
 
-	body := api.LoginPostOK{
+	body := oas.LoginPostOK{
 		Token:  token,
 		UserID: user_id,
 	}
 
-	headers := api.LoginPostOKHeaders{}
+	headers := oas.LoginPostOKHeaders{}
 	headers.SetResponse(body)
-
-	fmt.Println("kek")
 
 	return &headers, nil
 }
 
-func (*userService) ProfileUserIDGet(ctx context.Context, params api.ProfileUserIDGetParams) (api.ProfileUserIDGetRes, error) {
+func (*userService) ProfileUserIDGet(ctx context.Context, params oas.ProfileUserIDGetParams) (oas.ProfileUserIDGetRes, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (*userService) ProfileUserIDPost(ctx context.Context, req *api.ProfileUpdate, params api.ProfileUserIDPostParams) (api.ProfileUserIDPostRes, error) {
+func (*userService) ProfileUserIDPost(ctx context.Context, req *oas.ProfileUpdate, params oas.ProfileUserIDPostParams) (oas.ProfileUserIDPostRes, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (*userService) RegisterPost(ctx context.Context, req *api.CreateUserRequest) (api.RegisterPostRes, error) {
+func (*userService) RegisterPost(ctx context.Context, req *oas.CreateUserRequest) (oas.RegisterPostRes, error) {
+	log.Println("Register handler")
+	user_metadata := ctx.Value(USER_METADATA_KEY)
+	if user_metadata == nil {
+		fmt.Println("Not logined")
+	} else {
+		user_metadata := user_metadata.(userMetadata)
+		user_id := oas.UserId(user_metadata.user_id)
+		root_str := ""
+		if !user_metadata.root {
+			root_str = "(not root)"
+		} else {
+			root_str = "(root)"
+		}
+		fmt.Println("Logined as", uuid.UUID(user_id).String(), root_str)
+	}
 	return nil, errors.New("not implemented")
-}
-
-func (*userService) NewError(ctx context.Context, err error) *api.ErrorMessageStatusCode {
-	return nil
 }

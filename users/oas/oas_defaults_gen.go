@@ -17,11 +17,3 @@ func (s *ProfileInfo) setDefaults() {
 		s.Root = val
 	}
 }
-
-// setDefaults set default value of fields.
-func (s *ProfileUpdate) setDefaults() {
-	{
-		val := RootFlag(false)
-		s.Root.SetTo(val)
-	}
-}

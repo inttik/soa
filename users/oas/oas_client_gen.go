@@ -77,12 +77,8 @@ type Client struct {
 	sec       SecuritySource
 	baseClient
 }
-type errorHandler interface {
-	NewError(ctx context.Context, err error) *ErrorMessageStatusCode
-}
 
 var _ Handler = struct {
-	errorHandler
 	*Client
 }{}
 
@@ -217,6 +213,7 @@ func (c *Client) sendFriendsUserIDGet(ctx context.Context, params FriendsUserIDG
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {
@@ -544,6 +541,7 @@ func (c *Client) sendProfileUserIDGet(ctx context.Context, params ProfileUserIDG
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {
@@ -780,6 +778,7 @@ func (c *Client) sendRegisterPost(ctx context.Context, request *CreateUserReques
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {

@@ -70,11 +70,3 @@ func (UnimplementedHandler) ProfileUserIDPost(ctx context.Context, req *ProfileU
 func (UnimplementedHandler) RegisterPost(ctx context.Context, req *CreateUserRequest) (r RegisterPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
-
-// NewError creates *ErrorMessageStatusCode from error returned by handler.
-//
-// Used for common default response.
-func (UnimplementedHandler) NewError(ctx context.Context, err error) (r *ErrorMessageStatusCode) {
-	r = new(ErrorMessageStatusCode)
-	return r
-}

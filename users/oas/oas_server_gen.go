@@ -48,10 +48,6 @@ type Handler interface {
 	//
 	// POST /register
 	RegisterPost(ctx context.Context, req *CreateUserRequest) (RegisterPostRes, error)
-	// NewError creates *ErrorMessageStatusCode from error returned by handler.
-	//
-	// Used for common default response.
-	NewError(ctx context.Context, err error) *ErrorMessageStatusCode
 }
 
 // Server implements http server based on OpenAPI v3 specification and

@@ -12,6 +12,7 @@ paths:
       summary: Register new user
       description: Checks if user can be created and, if so, creates it and returns user_id. Only root can create root users.
       security:
+        - {}
         - bearerHttpAuthentication: []
       requestBody:
         required: true
@@ -41,12 +42,6 @@ paths:
           description: Try to create root user, while not root
         503:
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content: 
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
 
   /login:
     post:
@@ -96,18 +91,13 @@ paths:
           description: User not found
         503:
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content: 
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
 
   /profile/{user_id}:
     get:
       summary: Get user profile information
       description: Get all user profile information.
       security:
+        - {}
         - bearerHttpAuthentication: []
       parameters:
         - $ref: "#/components/parameters/userId"
@@ -122,12 +112,6 @@ paths:
           description: User not found
         503: 
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content: 
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update user profile
       description: Check if user profile can be update by current user and, if so, updates it.
@@ -163,12 +147,6 @@ paths:
           description: User not found
         503: 
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content: 
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
   /friends/{user_id}:
     get:
       summary: Get friends of user
@@ -178,6 +156,7 @@ paths:
         root or is user_id), then friend aliasas are returned
         as well as friend pairs metadata.
       security:
+        - {}
         - bearerHttpAuthentication: []
       parameters:
         - $ref: "#/components/parameters/userId"
@@ -196,12 +175,6 @@ paths:
           description: User not found
         503: 
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update friends state of user.
       description: Add, update, or remove friend of user
@@ -247,12 +220,6 @@ paths:
                   value: Friend {friend_id} not found.
         503: 
           description: Server is not available
-        'default':
-          description: An unexpected error occurred
-          content: 
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorMessage"
 
 components:
   securitySchemes:
@@ -387,8 +354,6 @@ components:
       properties:
         email:
           $ref: "#/components/schemas/emailString"
-        root:
-          $ref: "#/components/schemas/rootFlag"
         firstName:
           $ref: "#/components/schemas/nameString"
         lastName:

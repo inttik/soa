@@ -278,46 +278,6 @@ func (s *EmailString) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes ErrorMessage as json.
-func (s ErrorMessage) Encode(e *jx.Encoder) {
-	unwrapped := string(s)
-
-	e.Str(unwrapped)
-}
-
-// Decode decodes ErrorMessage from json.
-func (s *ErrorMessage) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ErrorMessage to nil")
-	}
-	var unwrapped string
-	if err := func() error {
-		v, err := d.Str()
-		unwrapped = string(v)
-		if err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = ErrorMessage(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s ErrorMessage) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ErrorMessage) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes FriendAliasString as json.
 func (s FriendAliasString) Encode(e *jx.Encoder) {
 	unwrapped := string(s)
@@ -2059,12 +2019,6 @@ func (s *ProfileUpdate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Root.Set {
-			e.FieldStart("root")
-			s.Root.Encode(e)
-		}
-	}
-	{
 		if s.FirstName.Set {
 			e.FieldStart("firstName")
 			s.FirstName.Encode(e)
@@ -2096,14 +2050,13 @@ func (s *ProfileUpdate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfProfileUpdate = [7]string{
+var jsonFieldsNameOfProfileUpdate = [6]string{
 	0: "email",
-	1: "root",
-	2: "firstName",
-	3: "lastName",
-	4: "imageLink",
-	5: "birthDate",
-	6: "telephone",
+	1: "firstName",
+	2: "lastName",
+	3: "imageLink",
+	4: "birthDate",
+	5: "telephone",
 }
 
 // Decode decodes ProfileUpdate from json.
@@ -2111,7 +2064,6 @@ func (s *ProfileUpdate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode ProfileUpdate to nil")
 	}
-	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -2124,16 +2076,6 @@ func (s *ProfileUpdate) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"email\"")
-			}
-		case "root":
-			if err := func() error {
-				s.Root.Reset()
-				if err := s.Root.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"root\"")
 			}
 		case "firstName":
 			if err := func() error {

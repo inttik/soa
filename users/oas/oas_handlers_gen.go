@@ -116,9 +116,8 @@ func (s *Server) handleFriendsUserIDGetRequest(args [1]string, argsEscaped bool,
 					Security:         "BearerHttpAuthentication",
 					Err:              err,
 				}
-				if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-					defer recordError("Security:BearerHttpAuthentication", err)
-				}
+				defer recordError("Security:BearerHttpAuthentication", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
 				return
 			}
 			if ok {
@@ -130,6 +129,7 @@ func (s *Server) handleFriendsUserIDGetRequest(args [1]string, argsEscaped bool,
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {
@@ -145,9 +145,8 @@ func (s *Server) handleFriendsUserIDGetRequest(args [1]string, argsEscaped bool,
 				OperationContext: opErrContext,
 				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
 			}
-			if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-				defer recordError("Security", err)
-			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
 			return
 		}
 	}
@@ -201,19 +200,8 @@ func (s *Server) handleFriendsUserIDGetRequest(args [1]string, argsEscaped bool,
 		response, err = s.h.FriendsUserIDGet(ctx, params)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 
@@ -310,9 +298,8 @@ func (s *Server) handleFriendsUserIDPostRequest(args [1]string, argsEscaped bool
 					Security:         "BearerHttpAuthentication",
 					Err:              err,
 				}
-				if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-					defer recordError("Security:BearerHttpAuthentication", err)
-				}
+				defer recordError("Security:BearerHttpAuthentication", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
 				return
 			}
 			if ok {
@@ -339,9 +326,8 @@ func (s *Server) handleFriendsUserIDPostRequest(args [1]string, argsEscaped bool
 				OperationContext: opErrContext,
 				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
 			}
-			if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-				defer recordError("Security", err)
-			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
 			return
 		}
 	}
@@ -410,19 +396,8 @@ func (s *Server) handleFriendsUserIDPostRequest(args [1]string, argsEscaped bool
 		response, err = s.h.FriendsUserIDPost(ctx, request, params)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 
@@ -558,19 +533,8 @@ func (s *Server) handleLoginPostRequest(args [0]string, argsEscaped bool, w http
 		response, err = s.h.LoginPost(ctx, request)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 
@@ -667,9 +631,8 @@ func (s *Server) handleProfileUserIDGetRequest(args [1]string, argsEscaped bool,
 					Security:         "BearerHttpAuthentication",
 					Err:              err,
 				}
-				if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-					defer recordError("Security:BearerHttpAuthentication", err)
-				}
+				defer recordError("Security:BearerHttpAuthentication", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
 				return
 			}
 			if ok {
@@ -681,6 +644,7 @@ func (s *Server) handleProfileUserIDGetRequest(args [1]string, argsEscaped bool,
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {
@@ -696,9 +660,8 @@ func (s *Server) handleProfileUserIDGetRequest(args [1]string, argsEscaped bool,
 				OperationContext: opErrContext,
 				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
 			}
-			if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-				defer recordError("Security", err)
-			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
 			return
 		}
 	}
@@ -752,19 +715,8 @@ func (s *Server) handleProfileUserIDGetRequest(args [1]string, argsEscaped bool,
 		response, err = s.h.ProfileUserIDGet(ctx, params)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 
@@ -861,9 +813,8 @@ func (s *Server) handleProfileUserIDPostRequest(args [1]string, argsEscaped bool
 					Security:         "BearerHttpAuthentication",
 					Err:              err,
 				}
-				if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-					defer recordError("Security:BearerHttpAuthentication", err)
-				}
+				defer recordError("Security:BearerHttpAuthentication", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
 				return
 			}
 			if ok {
@@ -890,9 +841,8 @@ func (s *Server) handleProfileUserIDPostRequest(args [1]string, argsEscaped bool
 				OperationContext: opErrContext,
 				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
 			}
-			if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-				defer recordError("Security", err)
-			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
 			return
 		}
 	}
@@ -961,19 +911,8 @@ func (s *Server) handleProfileUserIDPostRequest(args [1]string, argsEscaped bool
 		response, err = s.h.ProfileUserIDPost(ctx, request, params)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 
@@ -1071,9 +1010,8 @@ func (s *Server) handleRegisterPostRequest(args [0]string, argsEscaped bool, w h
 					Security:         "BearerHttpAuthentication",
 					Err:              err,
 				}
-				if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-					defer recordError("Security:BearerHttpAuthentication", err)
-				}
+				defer recordError("Security:BearerHttpAuthentication", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
 				return
 			}
 			if ok {
@@ -1085,6 +1023,7 @@ func (s *Server) handleRegisterPostRequest(args [0]string, argsEscaped bool, w h
 		if ok := func() bool {
 		nextRequirement:
 			for _, requirement := range []bitset{
+				{},
 				{0b00000001},
 			} {
 				for i, mask := range requirement {
@@ -1100,9 +1039,8 @@ func (s *Server) handleRegisterPostRequest(args [0]string, argsEscaped bool, w h
 				OperationContext: opErrContext,
 				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
 			}
-			if encodeErr := encodeErrorResponse(s.h.NewError(ctx, err), w, span); encodeErr != nil {
-				defer recordError("Security", err)
-			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
 			return
 		}
 	}
@@ -1156,19 +1094,8 @@ func (s *Server) handleRegisterPostRequest(args [0]string, argsEscaped bool, w h
 		response, err = s.h.RegisterPost(ctx, request)
 	}
 	if err != nil {
-		if errRes, ok := errors.Into[*ErrorMessageStatusCode](err); ok {
-			if err := encodeErrorResponse(errRes, w, span); err != nil {
-				defer recordError("Internal", err)
-			}
-			return
-		}
-		if errors.Is(err, ht.ErrNotImplemented) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-			return
-		}
-		if err := encodeErrorResponse(s.h.NewError(ctx, err), w, span); err != nil {
-			defer recordError("Internal", err)
-		}
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
 

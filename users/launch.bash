@@ -1,3 +1,3 @@
 #!/bin/bash
-go build -o main ./cmd
-./main
+go build -o bin/main ./cmd
+./bin/main
