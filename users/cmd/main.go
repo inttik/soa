@@ -6,11 +6,20 @@ import (
 
 	handler "users/handlers"
 	mockstorage "users/internal/mock_storage"
-	api "users/oas"
+	passhandle "users/internal/pass_handle"
+	"users/oas"
 )
 
 func main() {
 	storage, err := mockstorage.NewMockStorage()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	adminLogin := oas.LoginString("admin")
+	adminPass := oas.PasswordString("admin")
+	hashedPass := passhandle.HashPass(adminLogin, adminPass)
+	err = storage.MakeRootUser(adminLogin, oas.PasswordString(hashedPass))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	srv, err := api.NewServer(&service, &security)
+	srv, err := oas.NewServer(&service, &security)
 	if err != nil {
 		log.Fatal(err)
 	}

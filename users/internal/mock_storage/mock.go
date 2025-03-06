@@ -16,10 +16,6 @@ type mockStorage struct {
 	f  friends
 }
 
-func (s *mockStorage) MakeRootUser() error {
-	return nil
-}
-
 func NewMockStorage() (mockStorage, error) {
 	return mockStorage{
 		ui: userInfo{
@@ -29,6 +25,17 @@ func NewMockStorage() (mockStorage, error) {
 		up: userProfile{data: make(map[uuid.UUID]userProfileData)},
 		f:  friends{data: make(map[uuid.UUID]map[uuid.UUID]friendsData)},
 	}, nil
+}
+
+func (s *mockStorage) MakeRootUser(login oas.LoginString, password oas.PasswordString) error {
+	createRequest := oas.CreateUserRequest{
+		Login:    login,
+		Password: password,
+		Email:    oas.EmailString(string(login) + "@root"),
+		Root:     oas.NewOptRootFlag(true),
+	}
+	_, err := s.CreateUser(&createRequest)
+	return err
 }
 
 func (ms *mockStorage) CreateUser(request *oas.CreateUserRequest) (uuid.UUID, error) {
