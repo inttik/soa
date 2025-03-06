@@ -27,28 +27,52 @@ type jwtHandler struct {
 }
 
 const (
-	jwtPublicFile  = "secrets/signature.pub"
-	jwtPrivateFile = "secrets/signature.pem"
+	EnvJwtPublic  = "JWT_PUBLIC"
+	EnvJwtPrivate = "JWT_PRIVATE"
 )
 
 func NewHandler() (jwtHandler, error) {
-	privateKey, err := os.ReadFile(jwtPrivateFile)
+	privateKey, exists := os.LookupEnv(EnvJwtPrivate)
+	if !exists {
+		return jwtHandler{}, errors.New("no env variable for jwt privater")
+	}
+	publicKey, exists := os.LookupEnv(EnvJwtPublic)
+	if !exists {
+		return jwtHandler{}, errors.New("no env variable for jwt public")
+	}
+	jwtPrivate, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
 		return jwtHandler{}, err
 	}
-	publicKey, err := os.ReadFile(jwtPublicFile)
-	if err != nil {
-		return jwtHandler{}, err
-	}
-	jwtPrivate, err := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
-	if err != nil {
-		return jwtHandler{}, err
-	}
-	jwtPublic, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
+	jwtPublic, err := jwt.ParseRSAPublicKeyFromPEM([]byte(publicKey))
 	if err != nil {
 		return jwtHandler{}, err
 	}
 	return jwtHandler{jwtPublic: jwtPublic, jwtPrivate: jwtPrivate}, nil
+}
+
+func SetupEnv(path string) error {
+	privateKey, err := os.ReadFile(path + "/signature.pem")
+	if err != nil {
+		_, exists := os.LookupEnv(EnvJwtPrivate)
+		if !exists {
+			return err
+		}
+	}
+	err = os.Setenv(EnvJwtPrivate, string(privateKey))
+	if err != nil {
+		return err
+	}
+
+	publicKey, err := os.ReadFile(path + "/signature.pub")
+	if err != nil {
+		return err
+	}
+	err = os.Setenv(EnvJwtPublic, string(publicKey))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *jwtHandler) GenerateJWT(metadata UserMetadata) (string, error) {

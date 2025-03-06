@@ -275,7 +275,7 @@ components:
     jwtToken:
       type: string
       description: A JWT token, containing user_id, root flag and expires info
-      maxLength: 255
+      maxLength: 1023
       format: jwt
     errorMessage:
       type: string
@@ -305,12 +305,10 @@ components:
     linkString:
       type: string
       format: uri
-      maxLength: 255
       example: https://example.org/test.png
     birthString:
       type: string
       format: date
-      maxLength: 20
     telephoneString:
       type: string
       maxLength: 20
@@ -319,7 +317,6 @@ components:
       example: "+7 (900) 000-00-00"
     dateString:
       type: string
-      maxLength: 20
       format: date-time
     friendAliasString:
       type: string

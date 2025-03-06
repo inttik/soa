@@ -5,12 +5,18 @@ import (
 	"net/http"
 
 	handler "users/handlers"
+	jwttoken "users/internal/jwt_token"
 	mockstorage "users/internal/mock_storage"
-	passhandle "users/internal/pass_handle"
+	passhandle "users/internal/passhandler"
 	"users/oas"
 )
 
 func main() {
+	err := jwttoken.SetupEnv("secrets/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	storage, err := mockstorage.NewMockStorage()
 	if err != nil {
 		log.Fatal(err)

@@ -207,7 +207,7 @@ func (s JwtToken) Validate() error {
 	if err := (validate.String{
 		MinLength:    0,
 		MinLengthSet: false,
-		MaxLength:    255,
+		MaxLength:    1023,
 		MaxLengthSet: true,
 		Email:        false,
 		Hostname:     false,

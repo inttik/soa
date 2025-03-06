@@ -1,4 +1,4 @@
-package passhandle
+package passhandler
 
 import (
 	"crypto/md5"
