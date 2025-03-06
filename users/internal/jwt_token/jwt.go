@@ -52,18 +52,18 @@ func NewHandler() (jwtHandler, error) {
 }
 
 func SetupEnv(path string) error {
-	/*privateKey, err := os.ReadFile(path + "/signature.pem")
+	privateKey, err := os.ReadFile(path + "/signature.pem")
 	if err != nil {
 		_, exists := os.LookupEnv(EnvJwtPrivate)
 		if !exists {
 			return err
 		}
+	} else {
+		err := os.Setenv(EnvJwtPrivate, string(privateKey))
+		if err != nil {
+			return err
+		}
 	}
-	err := os.Setenv(EnvJwtPrivate, string(privateKey))
-	if err != nil {
-		return err
-	}
-	*/
 
 	publicKey, err := os.ReadFile(path + "/signature.pub")
 	if err != nil {
