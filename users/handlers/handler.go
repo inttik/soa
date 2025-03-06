@@ -6,17 +6,22 @@ import (
 	"fmt"
 	"log"
 
+	jwttoken "users/internal/jwt_token"
 	"users/oas"
 
 	"github.com/google/uuid"
 )
 
 type userService struct {
-	id int64
+	jwt jwttoken.JWTValidator
 }
 
-func NewService() userService {
-	return userService{id: 0}
+func NewService() (userService, error) {
+	jwt, err := jwttoken.NewHandler()
+	if err != nil {
+		return userService{}, err
+	}
+	return userService{jwt: jwt}, nil
 }
 
 func (*userService) FriendsUserIDGet(ctx context.Context, params oas.FriendsUserIDGetParams) (oas.FriendsUserIDGetRes, error) {
@@ -27,21 +32,24 @@ func (*userService) FriendsUserIDPost(ctx context.Context, req *oas.FriendModify
 	return nil, errors.New("not implemented")
 }
 
-func (*userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) (oas.LoginPostRes, error) {
-	token := oas.JwtToken{}
-	user_id := oas.UserId{}
+func (s *userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) (oas.LoginPostRes, error) {
+	userId := oas.UserId(uuid.New())
 
-	user_metadata := ctx.Value(USER_METADATA_KEY)
-	if user_metadata == nil {
-		fmt.Println("Not logined")
-	} else {
-		user_id = oas.UserId(user_metadata.(userMetadata).user_id)
-		fmt.Println("Logined as", user_id)
+	metadata := jwttoken.UserMetadata{
+		Root:   false,
+		UserId: uuid.UUID(userId),
 	}
 
+	token, err := s.jwt.GenerateJWT(metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println(token)
+
 	body := oas.LoginPostOK{
-		Token:  token,
-		UserID: user_id,
+		Token:  oas.JwtToken(token),
+		UserID: userId,
 	}
 
 	headers := oas.LoginPostOKHeaders{}
@@ -60,19 +68,19 @@ func (*userService) ProfileUserIDPost(ctx context.Context, req *oas.ProfileUpdat
 
 func (*userService) RegisterPost(ctx context.Context, req *oas.CreateUserRequest) (oas.RegisterPostRes, error) {
 	log.Println("Register handler")
-	user_metadata := ctx.Value(USER_METADATA_KEY)
-	if user_metadata == nil {
+	userMetadata := ctx.Value(UserMetadataKey)
+	if userMetadata == nil {
 		fmt.Println("Not logined")
 	} else {
-		user_metadata := user_metadata.(userMetadata)
-		user_id := oas.UserId(user_metadata.user_id)
-		root_str := ""
-		if !user_metadata.root {
-			root_str = "(not root)"
+		userMetadata := userMetadata.(jwttoken.UserMetadata)
+		userId := oas.UserId(userMetadata.UserId)
+		rootStr := ""
+		if !userMetadata.Root {
+			rootStr = "(not root)"
 		} else {
-			root_str = "(root)"
+			rootStr = "(root)"
 		}
-		fmt.Println("Logined as", uuid.UUID(user_id).String(), root_str)
+		fmt.Println("Logined as", uuid.UUID(userId).String(), rootStr)
 	}
 	return nil, errors.New("not implemented")
 }

@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	service := handler.NewService()
+	service, err := handler.NewService()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	security, err := handler.NewSecurityHandler()
 	if err != nil {
 		log.Fatal(err)

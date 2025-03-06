@@ -307,7 +307,7 @@ type FriendsUserIDPostUnauthorized struct{}
 
 func (*FriendsUserIDPostUnauthorized) friendsUserIDPostRes() {}
 
-type JwtToken []byte
+type JwtToken string
 
 type LinkString url.URL
 

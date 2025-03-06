@@ -911,9 +911,9 @@ func (s *FriendsUserIDPostOK) UnmarshalJSON(data []byte) error {
 
 // Encode encodes JwtToken as json.
 func (s JwtToken) Encode(e *jx.Encoder) {
-	unwrapped := []byte(s)
+	unwrapped := string(s)
 
-	e.Base64(unwrapped)
+	e.Str(unwrapped)
 }
 
 // Decode decodes JwtToken from json.
@@ -921,10 +921,10 @@ func (s *JwtToken) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode JwtToken to nil")
 	}
-	var unwrapped []byte
+	var unwrapped string
 	if err := func() error {
-		v, err := d.Base64()
-		unwrapped = []byte(v)
+		v, err := d.Str()
+		unwrapped = string(v)
 		if err != nil {
 			return err
 		}

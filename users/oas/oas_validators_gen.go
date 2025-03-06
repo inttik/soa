@@ -203,7 +203,7 @@ func (s *FriendsUserIDPostOK) Validate() error {
 }
 
 func (s JwtToken) Validate() error {
-	alias := ([]byte)(s)
+	alias := (string)(s)
 	if err := (validate.String{
 		MinLength:    0,
 		MinLengthSet: false,
