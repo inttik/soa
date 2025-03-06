@@ -231,33 +231,93 @@ type FriendPairedFlag bool
 
 type FriendSubscribedFlag bool
 
-// FriendsUserIDGetBadRequest is response for FriendsUserIDGet operation.
-type FriendsUserIDGetBadRequest struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDGetBadRequest struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDGetBadRequest) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDGetBadRequest) friendsUserIDGetRes() {}
 
-// FriendsUserIDGetForbidden is response for FriendsUserIDGet operation.
-type FriendsUserIDGetForbidden struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDGetForbidden struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDGetForbidden) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDGetForbidden) friendsUserIDGetRes() {}
 
-// FriendsUserIDGetNotFound is response for FriendsUserIDGet operation.
-type FriendsUserIDGetNotFound struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDGetNotFound struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDGetNotFound) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDGetNotFound) friendsUserIDGetRes() {}
 
-// FriendsUserIDGetServiceUnavailable is response for FriendsUserIDGet operation.
-type FriendsUserIDGetServiceUnavailable struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDPostBadRequest struct {
+	Data io.Reader
+}
 
-func (*FriendsUserIDGetServiceUnavailable) friendsUserIDGetRes() {}
-
-// FriendsUserIDPostBadRequest is response for FriendsUserIDPost operation.
-type FriendsUserIDPostBadRequest struct{}
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDPostBadRequest) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDPostBadRequest) friendsUserIDPostRes() {}
 
-// FriendsUserIDPostForbidden is response for FriendsUserIDPost operation.
-type FriendsUserIDPostForbidden struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDPostForbidden struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDPostForbidden) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDPostForbidden) friendsUserIDPostRes() {}
 
@@ -297,13 +357,21 @@ func (s *FriendsUserIDPostOK) SetFriend(val OptFriendObject) {
 
 func (*FriendsUserIDPostOK) friendsUserIDPostRes() {}
 
-// FriendsUserIDPostServiceUnavailable is response for FriendsUserIDPost operation.
-type FriendsUserIDPostServiceUnavailable struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type FriendsUserIDPostUnauthorized struct {
+	Data io.Reader
+}
 
-func (*FriendsUserIDPostServiceUnavailable) friendsUserIDPostRes() {}
-
-// FriendsUserIDPostUnauthorized is response for FriendsUserIDPost operation.
-type FriendsUserIDPostUnauthorized struct{}
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s FriendsUserIDPostUnauthorized) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*FriendsUserIDPostUnauthorized) friendsUserIDPostRes() {}
 
@@ -311,13 +379,39 @@ type JwtToken string
 
 type LinkString url.URL
 
-// LoginPostBadRequest is response for LoginPost operation.
-type LoginPostBadRequest struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type LoginPostBadRequest struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s LoginPostBadRequest) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*LoginPostBadRequest) loginPostRes() {}
 
-// LoginPostNotFound is response for LoginPost operation.
-type LoginPostNotFound struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type LoginPostNotFound struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s LoginPostNotFound) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*LoginPostNotFound) loginPostRes() {}
 
@@ -346,52 +440,7 @@ func (s *LoginPostOK) SetUserID(val UserId) {
 	s.UserID = val
 }
 
-// LoginPostOKHeaders wraps LoginPostOK with response headers.
-type LoginPostOKHeaders struct {
-	SetCookie OptLoginPostOKSetCookie
-	Response  LoginPostOK
-}
-
-// GetSetCookie returns the value of SetCookie.
-func (s *LoginPostOKHeaders) GetSetCookie() OptLoginPostOKSetCookie {
-	return s.SetCookie
-}
-
-// GetResponse returns the value of Response.
-func (s *LoginPostOKHeaders) GetResponse() LoginPostOK {
-	return s.Response
-}
-
-// SetSetCookie sets the value of SetCookie.
-func (s *LoginPostOKHeaders) SetSetCookie(val OptLoginPostOKSetCookie) {
-	s.SetCookie = val
-}
-
-// SetResponse sets the value of Response.
-func (s *LoginPostOKHeaders) SetResponse(val LoginPostOK) {
-	s.Response = val
-}
-
-func (*LoginPostOKHeaders) loginPostRes() {}
-
-type LoginPostOKSetCookie struct {
-	Token OptString `json:"token"`
-}
-
-// GetToken returns the value of Token.
-func (s *LoginPostOKSetCookie) GetToken() OptString {
-	return s.Token
-}
-
-// SetToken sets the value of Token.
-func (s *LoginPostOKSetCookie) SetToken(val OptString) {
-	s.Token = val
-}
-
-// LoginPostServiceUnavailable is response for LoginPost operation.
-type LoginPostServiceUnavailable struct{}
-
-func (*LoginPostServiceUnavailable) loginPostRes() {}
+func (*LoginPostOK) loginPostRes() {}
 
 type LoginString string
 
@@ -883,52 +932,6 @@ func (o OptLinkString) Or(d LinkString) LinkString {
 	return d
 }
 
-// NewOptLoginPostOKSetCookie returns new OptLoginPostOKSetCookie with value set to v.
-func NewOptLoginPostOKSetCookie(v LoginPostOKSetCookie) OptLoginPostOKSetCookie {
-	return OptLoginPostOKSetCookie{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptLoginPostOKSetCookie is optional LoginPostOKSetCookie.
-type OptLoginPostOKSetCookie struct {
-	Value LoginPostOKSetCookie
-	Set   bool
-}
-
-// IsSet returns true if OptLoginPostOKSetCookie was set.
-func (o OptLoginPostOKSetCookie) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptLoginPostOKSetCookie) Reset() {
-	var v LoginPostOKSetCookie
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptLoginPostOKSetCookie) SetTo(v LoginPostOKSetCookie) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptLoginPostOKSetCookie) Get() (v LoginPostOKSetCookie, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptLoginPostOKSetCookie) Or(d LoginPostOKSetCookie) LoginPostOKSetCookie {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptNameString returns new OptNameString with value set to v.
 func NewOptNameString(v NameString) OptNameString {
 	return OptNameString{
@@ -1021,52 +1024,6 @@ func (o OptRootFlag) Or(d RootFlag) RootFlag {
 	return d
 }
 
-// NewOptString returns new OptString with value set to v.
-func NewOptString(v string) OptString {
-	return OptString{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptString is optional string.
-type OptString struct {
-	Value string
-	Set   bool
-}
-
-// IsSet returns true if OptString was set.
-func (o OptString) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptString) Reset() {
-	var v string
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptString) SetTo(v string) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptString) Get() (v string, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptString) Or(d string) string {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptTelephoneString returns new OptTelephoneString with value set to v.
 func NewOptTelephoneString(v TelephoneString) OptTelephoneString {
 	return OptTelephoneString{
@@ -1119,7 +1076,7 @@ type PasswordString string
 type ProfileInfo struct {
 	Login      LoginString        `json:"login"`
 	Email      EmailString        `json:"email"`
-	Root       RootFlag           `json:"root"`
+	Root       OptRootFlag        `json:"root"`
 	FirstName  OptNameString      `json:"firstName"`
 	LastName   OptNameString      `json:"lastName"`
 	ImageLink  OptLinkString      `json:"imageLink"`
@@ -1140,7 +1097,7 @@ func (s *ProfileInfo) GetEmail() EmailString {
 }
 
 // GetRoot returns the value of Root.
-func (s *ProfileInfo) GetRoot() RootFlag {
+func (s *ProfileInfo) GetRoot() OptRootFlag {
 	return s.Root
 }
 
@@ -1190,7 +1147,7 @@ func (s *ProfileInfo) SetEmail(val EmailString) {
 }
 
 // SetRoot sets the value of Root.
-func (s *ProfileInfo) SetRoot(val RootFlag) {
+func (s *ProfileInfo) SetRoot(val OptRootFlag) {
 	s.Root = val
 }
 
@@ -1302,38 +1259,93 @@ func (s *ProfileUpdate) SetTelephone(val OptTelephoneString) {
 	s.Telephone = val
 }
 
-// ProfileUserIDGetNotFound is response for ProfileUserIDGet operation.
-type ProfileUserIDGetNotFound struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type ProfileUserIDGetNotFound struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s ProfileUserIDGetNotFound) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*ProfileUserIDGetNotFound) profileUserIDGetRes() {}
 
-// ProfileUserIDGetServiceUnavailable is response for ProfileUserIDGet operation.
-type ProfileUserIDGetServiceUnavailable struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type ProfileUserIDPostBadRequest struct {
+	Data io.Reader
+}
 
-func (*ProfileUserIDGetServiceUnavailable) profileUserIDGetRes() {}
-
-// ProfileUserIDPostBadRequest is response for ProfileUserIDPost operation.
-type ProfileUserIDPostBadRequest struct{}
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s ProfileUserIDPostBadRequest) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*ProfileUserIDPostBadRequest) profileUserIDPostRes() {}
 
-// ProfileUserIDPostForbidden is response for ProfileUserIDPost operation.
-type ProfileUserIDPostForbidden struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type ProfileUserIDPostForbidden struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s ProfileUserIDPostForbidden) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*ProfileUserIDPostForbidden) profileUserIDPostRes() {}
 
-// ProfileUserIDPostNotFound is response for ProfileUserIDPost operation.
-type ProfileUserIDPostNotFound struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type ProfileUserIDPostNotFound struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s ProfileUserIDPostNotFound) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*ProfileUserIDPostNotFound) profileUserIDPostRes() {}
 
-// ProfileUserIDPostServiceUnavailable is response for ProfileUserIDPost operation.
-type ProfileUserIDPostServiceUnavailable struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type ProfileUserIDPostUnauthorized struct {
+	Data io.Reader
+}
 
-func (*ProfileUserIDPostServiceUnavailable) profileUserIDPostRes() {}
-
-// ProfileUserIDPostUnauthorized is response for ProfileUserIDPost operation.
-type ProfileUserIDPostUnauthorized struct{}
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s ProfileUserIDPostUnauthorized) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*ProfileUserIDPostUnauthorized) profileUserIDPostRes() {}
 
@@ -1355,15 +1367,23 @@ func (s RegisterPostBadRequest) Read(p []byte) (n int, err error) {
 
 func (*RegisterPostBadRequest) registerPostRes() {}
 
-// RegisterPostForbidden is response for RegisterPost operation.
-type RegisterPostForbidden struct{}
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type RegisterPostForbidden struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s RegisterPostForbidden) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
 
 func (*RegisterPostForbidden) registerPostRes() {}
-
-// RegisterPostServiceUnavailable is response for RegisterPost operation.
-type RegisterPostServiceUnavailable struct{}
-
-func (*RegisterPostServiceUnavailable) registerPostRes() {}
 
 type RootFlag bool
 

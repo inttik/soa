@@ -1776,8 +1776,10 @@ func (s *ProfileInfo) encodeFields(e *jx.Encoder) {
 		s.Email.Encode(e)
 	}
 	{
-		e.FieldStart("root")
-		s.Root.Encode(e)
+		if s.Root.Set {
+			e.FieldStart("root")
+			s.Root.Encode(e)
+		}
 	}
 	{
 		if s.FirstName.Set {
@@ -1867,8 +1869,8 @@ func (s *ProfileInfo) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "root":
-			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
+				s.Root.Reset()
 				if err := s.Root.Decode(d); err != nil {
 					return err
 				}
@@ -1956,7 +1958,7 @@ func (s *ProfileInfo) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b00000111,
+		0b00000011,
 		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {

@@ -108,7 +108,8 @@ package "Users service" #fcb295 {
     column(last_modify): DATETIME
   }
   table(Friends) #Salmon{
-    primary_key(id): UUID
+    primary_key(user_id): UUID
+    primary_key(friend_id): UUID
     --
     column(friend_alias): VARCHAR(255)
     column(subscribed): BOOL
@@ -116,8 +117,6 @@ package "Users service" #fcb295 {
     column(paired): BOOL
     column(friended_at): DATETIME
     column(last_modify): DATETIME
-    foreign_key(user_id): UUID
-    foreign_key(friend_id): UUID
   }
   UserInfo <..> UserProfile: " user_id"
   UserInfo <.. Friends: " user_id"

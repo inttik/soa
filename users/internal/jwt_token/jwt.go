@@ -51,7 +51,7 @@ func NewHandler() (jwtHandler, error) {
 	return jwtHandler{jwtPublic: jwtPublic, jwtPrivate: jwtPrivate}, nil
 }
 
-func (h jwtHandler) GenerateJWT(metadata UserMetadata) (string, error) {
+func (h *jwtHandler) GenerateJWT(metadata UserMetadata) (string, error) {
 	claims := jwt.MapClaims{
 		"exp":     time.Now().Add(time.Hour * 48).Unix(),
 		"iat":     time.Now(),
@@ -67,7 +67,7 @@ func (h jwtHandler) GenerateJWT(metadata UserMetadata) (string, error) {
 	return token, nil
 }
 
-func (h jwtHandler) ReadJWT(token string) (UserMetadata, error) {
+func (h *jwtHandler) ReadJWT(token string) (UserMetadata, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, errors.New("bad signing method")

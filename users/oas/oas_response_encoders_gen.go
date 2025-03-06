@@ -10,8 +10,6 @@ import (
 	"github.com/go-faster/jx"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
-
-	"github.com/ogen-go/ogen/uri"
 )
 
 func encodeFriendsUserIDGetResponse(response FriendsUserIDGetRes, w http.ResponseWriter, span trace.Span) error {
@@ -30,26 +28,38 @@ func encodeFriendsUserIDGetResponse(response FriendsUserIDGetRes, w http.Respons
 		return nil
 
 	case *FriendsUserIDGetBadRequest:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *FriendsUserIDGetForbidden:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(403)
 		span.SetStatus(codes.Error, http.StatusText(403))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *FriendsUserIDGetNotFound:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
-		return nil
-
-	case *FriendsUserIDGetServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -74,20 +84,38 @@ func encodeFriendsUserIDPostResponse(response FriendsUserIDPostRes, w http.Respo
 		return nil
 
 	case *FriendsUserIDPostBadRequest:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *FriendsUserIDPostUnauthorized:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(401)
 		span.SetStatus(codes.Error, http.StatusText(401))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *FriendsUserIDPostForbidden:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(403)
 		span.SetStatus(codes.Error, http.StatusText(403))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -103,12 +131,6 @@ func encodeFriendsUserIDPostResponse(response FriendsUserIDPostRes, w http.Respo
 
 		return nil
 
-	case *FriendsUserIDPostServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
-
-		return nil
-
 	default:
 		return errors.Errorf("unexpected response type: %T", response)
 	}
@@ -116,32 +138,13 @@ func encodeFriendsUserIDPostResponse(response FriendsUserIDPostRes, w http.Respo
 
 func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *LoginPostOKHeaders:
+	case *LoginPostOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		// Encoding response headers.
-		{
-			h := uri.NewHeaderEncoder(w.Header())
-			// Encode "Set-Cookie" header.
-			{
-				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "Set-Cookie",
-					Explode: false,
-				}
-				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					if val, ok := response.SetCookie.Get(); ok {
-						return val.EncodeURI(e)
-					}
-					return nil
-				}); err != nil {
-					return errors.Wrap(err, "encode Set-Cookie header")
-				}
-			}
-		}
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
-		response.Response.Encode(e)
+		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
 		}
@@ -149,20 +152,26 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 		return nil
 
 	case *LoginPostBadRequest:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *LoginPostNotFound:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
-		return nil
-
-	case *LoginPostServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -187,14 +196,14 @@ func encodeProfileUserIDGetResponse(response ProfileUserIDGetRes, w http.Respons
 		return nil
 
 	case *ProfileUserIDGetNotFound:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
-		return nil
-
-	case *ProfileUserIDGetServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -219,32 +228,50 @@ func encodeProfileUserIDPostResponse(response ProfileUserIDPostRes, w http.Respo
 		return nil
 
 	case *ProfileUserIDPostBadRequest:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *ProfileUserIDPostUnauthorized:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(401)
 		span.SetStatus(codes.Error, http.StatusText(401))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *ProfileUserIDPostForbidden:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(403)
 		span.SetStatus(codes.Error, http.StatusText(403))
+
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *ProfileUserIDPostNotFound:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
-		return nil
-
-	case *ProfileUserIDPostServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -281,14 +308,14 @@ func encodeRegisterPostResponse(response RegisterPostRes, w http.ResponseWriter,
 		return nil
 
 	case *RegisterPostForbidden:
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(403)
 		span.SetStatus(codes.Error, http.StatusText(403))
 
-		return nil
-
-	case *RegisterPostServiceUnavailable:
-		w.WriteHeader(503)
-		span.SetStatus(codes.Error, http.StatusText(503))
+		writer := w
+		if _, err := io.Copy(writer, response); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 

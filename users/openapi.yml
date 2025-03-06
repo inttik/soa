@@ -40,8 +40,10 @@ paths:
                   value: User with that login/email already exists.
         403:
           description: Try to create root user, while not root
-        503:
-          description: Server is not available
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
 
   /login:
     post:
@@ -61,18 +63,6 @@ paths:
       responses: 
         200:
           description: Successfully logged in
-          headers:
-            Set-Cookie:
-              description: Sets jwt cookie
-              schema:
-                type: object
-                properties:
-                  token: 
-                    type: string
-                    format: jwt
-              examples:
-                cookie-set: 
-                  value: "jwt=<...>"
           content:
             application/json:
               schema:
@@ -87,10 +77,16 @@ paths:
                     $ref: "#/components/schemas/userId"
         400:
           description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         404:
           description: User not found
-        503:
-          description: Server is not available
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
 
   /profile/{user_id}:
     get:
@@ -110,8 +106,10 @@ paths:
                 $ref: "#/components/schemas/profileInfo"
         404:
           description: User not found
-        503: 
-          description: Server is not available
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update user profile
       description: Check if user profile can be update by current user and, if so, updates it.
@@ -139,14 +137,29 @@ paths:
                 $ref: "#/components/schemas/profileInfo"
         400: 
           description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         401:
           description: Unauthorized 
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         403:
           description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         404:
           description: User not found
-        503: 
-          description: Server is not available
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+
   /friends/{user_id}:
     get:
       summary: Get friends of user
@@ -169,12 +182,22 @@ paths:
                 $ref: "#/components/schemas/friendList"
         400:
           description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         403:
           description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         404:
           description: User not found
-        503: 
-          description: Server is not available
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
     post:
       summary: Update friends state of user.
       description: Add, update, or remove friend of user
@@ -203,10 +226,22 @@ paths:
                     $ref: "#/components/schemas/friendObject"
         400:
           description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         401:
           description: Unauthorized
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         403:
           description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
         404:
           description: User of friend not found
           content:
@@ -218,8 +253,6 @@ paths:
                   value: User {user_id} not found.
                 FriendNotFound:
                   value: Friend {friend_id} not found.
-        503: 
-          description: Server is not available
 
 components:
   securitySchemes:
@@ -327,7 +360,6 @@ components:
       required:
         - login
         - email
-        - root
       properties:
         login:
           $ref: "#/components/schemas/loginString"

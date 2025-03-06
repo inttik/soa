@@ -14,6 +14,6 @@ func (s *CreateUserRequest) setDefaults() {
 func (s *ProfileInfo) setDefaults() {
 	{
 		val := RootFlag(false)
-		s.Root = val
+		s.Root.SetTo(val)
 	}
 }

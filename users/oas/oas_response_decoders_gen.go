@@ -12,7 +12,6 @@ import (
 	"github.com/go-faster/jx"
 
 	"github.com/ogen-go/ogen/ogenerrors"
-	"github.com/ogen-go/ogen/uri"
 	"github.com/ogen-go/ogen/validate"
 )
 
@@ -64,16 +63,61 @@ func decodeFriendsUserIDGetResponse(resp *http.Response) (res FriendsUserIDGetRe
 		}
 	case 400:
 		// Code 400.
-		return &FriendsUserIDGetBadRequest{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDGetBadRequest{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 403:
 		// Code 403.
-		return &FriendsUserIDGetForbidden{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDGetForbidden{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 404:
 		// Code 404.
-		return &FriendsUserIDGetNotFound{}, nil
-	case 503:
-		// Code 503.
-		return &FriendsUserIDGetServiceUnavailable{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDGetNotFound{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -126,13 +170,61 @@ func decodeFriendsUserIDPostResponse(resp *http.Response) (res FriendsUserIDPost
 		}
 	case 400:
 		// Code 400.
-		return &FriendsUserIDPostBadRequest{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDPostBadRequest{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 401:
 		// Code 401.
-		return &FriendsUserIDPostUnauthorized{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDPostUnauthorized{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 403:
 		// Code 403.
-		return &FriendsUserIDPostForbidden{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := FriendsUserIDPostForbidden{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 404:
 		// Code 404.
 		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
@@ -152,9 +244,6 @@ func decodeFriendsUserIDPostResponse(resp *http.Response) (res FriendsUserIDPost
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
-	case 503:
-		// Code 503.
-		return &FriendsUserIDPostServiceUnavailable{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -201,48 +290,48 @@ func decodeLoginPostResponse(resp *http.Response) (res LoginPostRes, _ error) {
 			}(); err != nil {
 				return res, errors.Wrap(err, "validate")
 			}
-			var wrapper LoginPostOKHeaders
-			wrapper.Response = response
-			h := uri.NewHeaderDecoder(resp.Header)
-			// Parse "Set-Cookie" header.
-			{
-				cfg := uri.HeaderParameterDecodingConfig{
-					Name:    "Set-Cookie",
-					Explode: false,
-				}
-				if err := func() error {
-					if err := h.HasParam(cfg); err == nil {
-						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
-							var wrapperDotSetCookieVal LoginPostOKSetCookie
-							if err := func() error {
-								return wrapperDotSetCookieVal.DecodeURI(d)
-							}(); err != nil {
-								return err
-							}
-							wrapper.SetCookie.SetTo(wrapperDotSetCookieVal)
-							return nil
-						}); err != nil {
-							return err
-						}
-					}
-					return nil
-				}(); err != nil {
-					return res, errors.Wrap(err, "parse Set-Cookie header")
-				}
-			}
-			return &wrapper, nil
+			return &response, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
 	case 400:
 		// Code 400.
-		return &LoginPostBadRequest{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := LoginPostBadRequest{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 404:
 		// Code 404.
-		return &LoginPostNotFound{}, nil
-	case 503:
-		// Code 503.
-		return &LoginPostServiceUnavailable{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := LoginPostNotFound{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -295,10 +384,23 @@ func decodeProfileUserIDGetResponse(resp *http.Response) (res ProfileUserIDGetRe
 		}
 	case 404:
 		// Code 404.
-		return &ProfileUserIDGetNotFound{}, nil
-	case 503:
-		// Code 503.
-		return &ProfileUserIDGetServiceUnavailable{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := ProfileUserIDGetNotFound{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -351,19 +453,80 @@ func decodeProfileUserIDPostResponse(resp *http.Response) (res ProfileUserIDPost
 		}
 	case 400:
 		// Code 400.
-		return &ProfileUserIDPostBadRequest{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := ProfileUserIDPostBadRequest{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 401:
 		// Code 401.
-		return &ProfileUserIDPostUnauthorized{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := ProfileUserIDPostUnauthorized{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 403:
 		// Code 403.
-		return &ProfileUserIDPostForbidden{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := ProfileUserIDPostForbidden{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	case 404:
 		// Code 404.
-		return &ProfileUserIDPostNotFound{}, nil
-	case 503:
-		// Code 503.
-		return &ProfileUserIDPostServiceUnavailable{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := ProfileUserIDPostNotFound{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -426,10 +589,23 @@ func decodeRegisterPostResponse(resp *http.Response) (res RegisterPostRes, _ err
 		}
 	case 403:
 		// Code 403.
-		return &RegisterPostForbidden{}, nil
-	case 503:
-		// Code 503.
-		return &RegisterPostServiceUnavailable{}, nil
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "text/html":
+			reader := resp.Body
+			b, err := io.ReadAll(reader)
+			if err != nil {
+				return res, err
+			}
+
+			response := RegisterPostForbidden{Data: bytes.NewReader(b)}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }

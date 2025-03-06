@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"log"
+
 	jwttoken "users/internal/jwt_token"
 	api "users/oas"
 )
@@ -22,7 +23,7 @@ func NewSecurityHandler() (securityHandler, error) {
 	if err != nil {
 		return securityHandler{}, err
 	}
-	return securityHandler{jwt: jwt}, nil
+	return securityHandler{jwt: &jwt}, nil
 }
 
 func (h *securityHandler) HandleBearerHttpAuthentication(ctx context.Context, operationName api.OperationName, t api.BearerHttpAuthentication) (context.Context, error) {

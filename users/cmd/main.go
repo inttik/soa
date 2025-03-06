@@ -3,12 +3,19 @@ package main
 import (
 	"log"
 	"net/http"
+
 	handler "users/handlers"
+	mockstorage "users/internal/mock_storage"
 	api "users/oas"
 )
 
 func main() {
-	service, err := handler.NewService()
+	storage, err := mockstorage.NewMockStorage()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	service, err := handler.NewService(&storage)
 	if err != nil {
 		log.Fatal(err)
 	}
