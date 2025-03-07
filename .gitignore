@@ -1,2 +1,2 @@
-/users/bin/
-/users/secrets/signature.pem
+/users_service/bin/
+/users_service/secrets/signature.pem
