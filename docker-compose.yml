@@ -2,7 +2,7 @@ services:
   gateway-service:
     restart: always
     image: gateway-service
-    build: ./gateway
+    build: ./gateway_service
     ports:
       - "8080:8080"
     depends_on:
@@ -10,4 +10,4 @@ services:
   users-service:
     restart: always
     image: users-service
-    build: ./users
+    build: ./users_service
