@@ -1,1 +1,13 @@
-version: "3.9"
+services:
+  gateway-service:
+    restart: always
+    image: gateway-service
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users-service
+  users-service:
+    restart: always
+    image: users-service
+    build: ./users

@@ -48,6 +48,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", http.StripPrefix("/v1", srv))
 
+	log.Println("starting server")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
 	}
