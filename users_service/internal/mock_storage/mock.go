@@ -16,8 +16,8 @@ type mockStorage struct {
 	f  friends
 }
 
-func NewMockStorage() (mockStorage, error) {
-	return mockStorage{
+func NewMockStorage() (*mockStorage, error) {
+	return &mockStorage{
 		ui: userInfo{
 			data:  make(map[uuid.UUID]userInfoData),
 			index: make(map[oas.LoginString]uuid.UUID),

@@ -32,11 +32,12 @@ func (s *state) setup(t *testing.T) {
 
 	adminLogin := oas.LoginString("admin")
 	adminPass := oas.PasswordString("admin")
-	hashedPass := passhandler.HashPass(adminLogin, adminPass)
+	hashedPass, err := passhandler.HashPassword(adminPass)
+	assert.NoErrorf(t, err, "pass should be hashed")
 	err = storage.MakeRootUser(adminLogin, oas.PasswordString(hashedPass))
 	assert.NoErrorf(t, err, "Mock storage should have admin user")
 
-	serv, err := handlers.NewService(&storage)
+	serv, err := handlers.NewService(storage)
 	assert.NoErrorf(t, err, "Service should be created")
 	s.service = &serv
 

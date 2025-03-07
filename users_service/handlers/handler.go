@@ -45,7 +45,12 @@ func (s *userService) RegisterPost(ctx context.Context, req *oas.CreateUserReque
 		}
 	}
 
-	req.Password = oas.PasswordString(pass.HashPass(req.Login, req.Password))
+	hashed_pass, err := pass.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Password = oas.PasswordString(hashed_pass)
 
 	newUUID, err := s.sm.CreateUser(req)
 
@@ -62,14 +67,13 @@ func (s *userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) 
 	if err != nil {
 		return &oas.LoginPostNotFound{Data: strings.NewReader(err.Error())}, nil
 	}
-	currentPass := pass.HashPass(req.Login, req.Password)
 
 	correctPass, err := s.sm.GetPassword(oas.UserId(currentUUID))
 	if err != nil {
 		return &oas.LoginPostNotFound{Data: strings.NewReader(err.Error())}, nil
 	}
 
-	if currentPass != string(correctPass) {
+	if !pass.ComparePassword(string(req.Password), string(correctPass)) {
 		return &oas.LoginPostBadRequest{Data: strings.NewReader("bad password")}, nil
 	}
 

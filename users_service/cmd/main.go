@@ -6,8 +6,8 @@ import (
 
 	handler "users/handlers"
 	jwttoken "users/internal/jwt_token"
-	mockstorage "users/internal/mock_storage"
 	passhandle "users/internal/passhandler"
+	"users/internal/postgresstorage"
 	"users/oas"
 )
 
@@ -17,20 +17,26 @@ func main() {
 		log.Fatal(err)
 	}
 
-	storage, err := mockstorage.NewMockStorage()
+	// storage, err := mockstorage.NewMockStorage()
+	storage, err := postgresstorage.NewPostgresStorage()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	adminLogin := oas.LoginString("admin")
 	adminPass := oas.PasswordString("admin")
-	hashedPass := passhandle.HashPass(adminLogin, adminPass)
+	hashedPass, err := passhandle.HashPassword(adminPass)
+	if err != nil {
+		log.Fatal(err)
+	}
 	err = storage.MakeRootUser(adminLogin, oas.PasswordString(hashedPass))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	service, err := handler.NewService(&storage)
+	log.Println("User created")
+
+	service, err := handler.NewService(storage)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,7 +55,7 @@ func main() {
 	mux.Handle("/v1/", http.StripPrefix("/v1", srv))
 
 	log.Println("starting server")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8082", mux); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -94,7 +94,7 @@ package "Users service" #fcb295 {
     column(login): VARCHAR(255)
     column(pass): VARCHAR(255)
     column(root): BOOL
-    column(reg_date): DATETIME
+    column(reg_date): TIMESTAMP
   }
   table(UserProfile) #Salmon{
     primary_key(user_id): UUID
@@ -102,10 +102,10 @@ package "Users service" #fcb295 {
     column(first_name): VARCHAR(255)
     column(last_name): VARCHAR(255)
     column(image_link): VARCHAR(255)
-    column(birth_date): DATETIME
+    column(birth_date): DATE
     column(telephone): VARCHAR(20)
     column(email): VARCHAR(255)
-    column(last_modify): DATETIME
+    column(last_modify): TIMESTAMP
   }
   table(Friends) #Salmon{
     primary_key(user_id): UUID
@@ -115,8 +115,8 @@ package "Users service" #fcb295 {
     column(subscribed): BOOL
     column(hidden): BOOL
     column(paired): BOOL
-    column(friended_at): DATETIME
-    column(last_modify): DATETIME
+    column(friended_at): TIMESTAMP
+    column(last_modify): TIMESTAMP
   }
   UserInfo <..> UserProfile: " user_id"
   UserInfo <.. Friends: " user_id"

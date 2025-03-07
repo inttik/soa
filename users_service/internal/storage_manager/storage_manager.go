@@ -21,4 +21,6 @@ type StorageManager interface {
 	UpdateProfile(user oas.UserId, update *oas.ProfileUpdate) error
 	// Updates friend state. If there is no such user, or update is incorrect, returns error.
 	UpdateFriend(user oas.UserId, update *oas.FriendModify) error
+	// Make root user
+	MakeRootUser(login oas.LoginString, password oas.PasswordString) error
 }
