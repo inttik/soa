@@ -154,29 +154,6 @@ func (ps *postgresStorage) GetPassword(user oas.UserId) (oas.PasswordString, err
 }
 
 func (ps *postgresStorage) UpdateProfile(user oas.UserId, update *oas.ProfileUpdate) error {
-	modify := userProfile{}
-
-	if update.Email.IsSet() {
-		modify.Email = string(update.Email.Value)
-	}
-	if update.FirstName.IsSet() {
-		modify.FirstName = string(update.FirstName.Value)
-	}
-	if update.LastName.IsSet() {
-		modify.LastName = string(update.LastName.Value)
-	}
-	if update.ImageLink.IsSet() {
-		link := url.URL(update.ImageLink.Value)
-		modify.ImageLink = (&link).String()
-	}
-	if update.BirthDate.IsSet() {
-		modify.BirthDate = time.Time(update.BirthDate.Value)
-	}
-	if update.Telephone.IsSet() {
-		modify.Telephone = string(update.Telephone.Value)
-	}
-	modify.LastModify = time.Now()
-
 	err := ps.db.Transaction(func(tx *gorm.DB) error {
 		profile := userProfile{}
 		result := tx.Where("id = ?", uuid.UUID(user).String()).Limit(1).Find(&profile)
@@ -186,6 +163,28 @@ func (ps *postgresStorage) UpdateProfile(user oas.UserId, update *oas.ProfileUpd
 		if result.RowsAffected == 0 {
 			return ErrNoUser
 		}
+
+		if update.Email.IsSet() {
+			profile.Email = string(update.Email.Value)
+		}
+		if update.FirstName.IsSet() {
+			profile.FirstName = string(update.FirstName.Value)
+		}
+		if update.LastName.IsSet() {
+			profile.LastName = string(update.LastName.Value)
+		}
+		if update.ImageLink.IsSet() {
+			link := url.URL(update.ImageLink.Value)
+			profile.ImageLink = (&link).String()
+		}
+		if update.BirthDate.IsSet() {
+			profile.BirthDate = time.Time(update.BirthDate.Value)
+		}
+		if update.Telephone.IsSet() {
+			profile.Telephone = string(update.Telephone.Value)
+		}
+		profile.LastModify = time.Now()
+
 		result = tx.Save(&profile)
 		if result.Error != nil {
 			return result.Error

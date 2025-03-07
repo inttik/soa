@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      JWT_PRIVATE: ${{ secrets.JWT_PRIVATE }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v3
 

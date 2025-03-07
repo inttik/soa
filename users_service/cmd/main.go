@@ -55,7 +55,7 @@ func main() {
 	mux.Handle("/v1/", http.StripPrefix("/v1", srv))
 
 	log.Println("starting server")
-	if err := http.ListenAndServe(":8082", mux); err != nil {
+	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
 	}
 }

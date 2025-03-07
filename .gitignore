@@ -1,3 +1,7 @@
+# secrets
 /users_service/secrets/signature.pem
-/users_service/tmp
 .env
+
+# local launch
+/users_service/launch.bash
+/users_service/tmp
