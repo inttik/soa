@@ -1,4 +1,4 @@
-name: build
+name: Build all
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  build_all:
     runs-on: ubuntu-latest
 
     env:
