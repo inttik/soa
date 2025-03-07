@@ -1392,3 +1392,22 @@ type TelephoneString string
 type UserId uuid.UUID
 
 func (*UserId) registerPostRes() {}
+func (*UserId) userLoginGetRes() {}
+
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type UserLoginGetNotFound struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s UserLoginGetNotFound) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*UserLoginGetNotFound) userLoginGetRes() {}

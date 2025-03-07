@@ -24,3 +24,7 @@ type ProfileUserIDPostRes interface {
 type RegisterPostRes interface {
 	registerPostRes()
 }
+
+type UserLoginGetRes interface {
+	userLoginGetRes()
+}

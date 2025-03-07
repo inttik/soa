@@ -48,6 +48,12 @@ type Handler interface {
 	//
 	// POST /register
 	RegisterPost(ctx context.Context, req *CreateUserRequest) (RegisterPostRes, error)
+	// UserLoginGet implements GET /user/{login} operation.
+	//
+	// Returns user id of user with that login, or 404 if there is no such user.
+	//
+	// GET /user/{login}
+	UserLoginGet(ctx context.Context, params UserLoginGetParams) (UserLoginGetRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

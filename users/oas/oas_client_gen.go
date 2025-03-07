@@ -69,6 +69,12 @@ type Invoker interface {
 	//
 	// POST /register
 	RegisterPost(ctx context.Context, request *CreateUserRequest) (RegisterPostRes, error)
+	// UserLoginGet invokes GET /user/{login} operation.
+	//
+	// Returns user id of user with that login, or 404 if there is no such user.
+	//
+	// GET /user/{login}
+	UserLoginGet(ctx context.Context, params UserLoginGetParams) (UserLoginGetRes, error)
 }
 
 // Client implements OAS client.
@@ -803,6 +809,98 @@ func (c *Client) sendRegisterPost(ctx context.Context, request *CreateUserReques
 
 	stage = "DecodeResponse"
 	result, err := decodeRegisterPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UserLoginGet invokes GET /user/{login} operation.
+//
+// Returns user id of user with that login, or 404 if there is no such user.
+//
+// GET /user/{login}
+func (c *Client) UserLoginGet(ctx context.Context, params UserLoginGetParams) (UserLoginGetRes, error) {
+	res, err := c.sendUserLoginGet(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendUserLoginGet(ctx context.Context, params UserLoginGetParams) (res UserLoginGetRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/user/{login}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, UserLoginGetOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/user/"
+	{
+		// Encode "login" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "login",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			if unwrapped := string(params.Login); true {
+				return e.EncodeValue(conv.StringToString(unwrapped))
+			}
+			return nil
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeUserLoginGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

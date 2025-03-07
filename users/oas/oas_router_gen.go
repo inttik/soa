@@ -167,6 +167,34 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
+			case 'u': // Prefix: "user/"
+				origElem := elem
+				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				// Param: "login"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleUserLoginGetRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+
+				elem = origElem
 			}
 
 			elem = origElem
@@ -381,6 +409,36 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.pathPattern = "/register"
 						r.args = args
 						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+				elem = origElem
+			case 'u': // Prefix: "user/"
+				origElem := elem
+				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				// Param: "login"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = UserLoginGetOperation
+						r.summary = "Get user id"
+						r.operationID = ""
+						r.pathPattern = "/user/{login}"
+						r.args = args
+						r.count = 1
 						return r, true
 					default:
 						return

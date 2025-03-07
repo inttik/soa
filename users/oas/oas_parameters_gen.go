@@ -303,3 +303,83 @@ func decodeProfileUserIDPostParams(args [1]string, argsEscaped bool, r *http.Req
 	}
 	return params, nil
 }
+
+// UserLoginGetParams is parameters of GET /user/{login} operation.
+type UserLoginGetParams struct {
+	Login LoginString
+}
+
+func unpackUserLoginGetParams(packed middleware.Parameters) (params UserLoginGetParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "login",
+			In:   "path",
+		}
+		params.Login = packed[key].(LoginString)
+	}
+	return params
+}
+
+func decodeUserLoginGetParams(args [1]string, argsEscaped bool, r *http.Request) (params UserLoginGetParams, _ error) {
+	// Decode path: login.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "login",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				var paramsDotLoginVal string
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToString(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotLoginVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Login = LoginString(paramsDotLoginVal)
+				return nil
+			}(); err != nil {
+				return err
+			}
+			if err := func() error {
+				if err := params.Login.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "login",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}

@@ -145,6 +145,34 @@ func (s *state) applyLogin(req loginHelper, t *testing.T) (*oas.LoginPostOK, err
 	return nil, errors.New("500")
 }
 
+type userGetHelp struct {
+	req       oas.LoginString
+	expect200 bool
+	expect404 bool
+}
+
+func (s *state) applyUserGet(req userGetHelp, t *testing.T) (*oas.UserId, error) {
+	request := oas.UserLoginGetParams{
+		Login: req.req,
+	}
+	ctx := context.Background()
+
+	ret, err := s.service.UserLoginGet(ctx, request)
+	assert.NoErrorf(t, err, "Server raises no error")
+	switch u := ret.(type) {
+	case *oas.UserId:
+		assert.Equal(t, true, req.expect200)
+		assert.Equal(t, false, req.expect404)
+		return u, nil
+	case *oas.UserLoginGetNotFound:
+		assert.Equal(t, false, req.expect200)
+		assert.Equal(t, true, req.expect404)
+		return nil, errors.New("404")
+	}
+	t.Fatal("Unreachable")
+	return nil, errors.New("500")
+}
+
 type profileGetHelper struct {
 	req       oas.UserId
 	logined   *oas.LoginUserRequest
@@ -185,7 +213,7 @@ func (s *state) applyProfileGet(req profileGetHelper, t *testing.T) (*oas.Profil
 	}
 
 	ret, err := s.service.ProfileUserIDGet(ctx, request)
-	assert.NoErrorf(t, err, "service raise no errors")
+	assert.NoErrorf(t, err, "Service raise no errors")
 	switch u := ret.(type) {
 	case *oas.ProfileInfo:
 		assert.Equal(t, true, req.expect200)

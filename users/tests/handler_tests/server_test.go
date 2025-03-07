@@ -216,6 +216,52 @@ func TestNewAdminIsAdmin(t *testing.T) {
 	assert.NoError(t, err, "New admin is admin")
 }
 
+func TestUserGet(t *testing.T) {
+	t.Run("user get", func(t *testing.T) {
+		s := state{}
+		s.setup(t)
+		id, err := s.applyRegister(registerHelper{
+			req: oas.CreateUserRequest{
+				Login:    "user",
+				Password: "pswrd",
+				Email:    "email@gm",
+			},
+			expect201: true,
+		}, t)
+		assert.NoErrorf(t, err, "expect 201")
+
+		id2, err := s.applyUserGet(userGetHelp{
+			req:       "user",
+			expect200: true,
+		}, t)
+		assert.NoErrorf(t, err, "expect 200")
+		assert.Equal(t, id, id2)
+	})
+
+	t.Run("admin get", func(t *testing.T) {
+		s := state{}
+		s.setup(t)
+
+		_, err := s.applyUserGet(userGetHelp{
+			req:       "admin",
+			expect200: true,
+		}, t)
+		assert.NoErrorf(t, err, "expect 200")
+	})
+
+	t.Run("bad get", func(t *testing.T) {
+		s := state{}
+		s.setup(t)
+
+		_, err := s.applyUserGet(userGetHelp{
+			req:       "user",
+			expect404: true,
+		}, t)
+		assert.Error(t, err, "expect 404")
+	})
+
+}
+
 func TestProfileGet(t *testing.T) {
 	user1 := registerHelper{
 		req: oas.CreateUserRequest{
@@ -527,4 +573,67 @@ func TestProfileUpdate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestReadYourWrites(t *testing.T) {
+	s := state{}
+	s.setup(t)
+
+	user := registerHelper{
+		req: oas.CreateUserRequest{
+			Login:    "user",
+			Password: "pass",
+			Email:    "email@gm.co",
+		},
+		expect201: true,
+	}
+	id, err := s.applyRegister(user, t)
+	assert.NoErrorf(t, err, "expect 201")
+
+	getReq := profileGetHelper{
+		req:       *id,
+		expect200: true,
+	}
+	profile, err := s.applyProfileGet(getReq, t)
+	assert.NoErrorf(t, err, "expect 200")
+	assert.Equal(t, false, profile.FirstName.IsSet())
+
+	postReq := profilePostHelper{
+		target: id,
+		req: oas.ProfileUpdate{
+			FirstName: oas.NewOptNameString("Ivan"),
+		},
+		logined: &oas.LoginUserRequest{
+			Login:    "user",
+			Password: "pass",
+		},
+		expect200: true,
+	}
+	profile, err = s.applyProfilePost(postReq, t)
+	assert.NoErrorf(t, err, "expect 200")
+	assert.Equal(t, true, profile.FirstName.IsSet())
+	assert.Equal(t, "Ivan", string(profile.FirstName.Value))
+
+	profile, err = s.applyProfileGet(getReq, t)
+	assert.NoErrorf(t, err, "expect 200")
+	assert.Equal(t, true, profile.FirstName.IsSet())
+	assert.Equal(t, "Ivan", string(profile.FirstName.Value))
+
+	postReq2 := profilePostHelper{
+		target: id,
+		req: oas.ProfileUpdate{
+			FirstName: oas.NewOptNameString("Petr"),
+		},
+		admin:     true,
+		expect200: true,
+	}
+	profile, err = s.applyProfilePost(postReq2, t)
+	assert.NoErrorf(t, err, "expect 200")
+	assert.Equal(t, true, profile.FirstName.IsSet())
+	assert.Equal(t, "Petr", string(profile.FirstName.Value))
+
+	profile, err = s.applyProfileGet(getReq, t)
+	assert.NoErrorf(t, err, "expect 200")
+	assert.Equal(t, true, profile.FirstName.IsSet())
+	assert.Equal(t, "Petr", string(profile.FirstName.Value))
 }

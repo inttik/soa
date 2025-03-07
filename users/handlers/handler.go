@@ -101,6 +101,15 @@ func (s *userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) 
 	return &resp, nil
 }
 
+func (s *userService) UserLoginGet(ctx context.Context, params oas.UserLoginGetParams) (oas.UserLoginGetRes, error) {
+	id, err := s.sm.GetUserId(params.Login)
+	if err != nil {
+		return &oas.UserLoginGetNotFound{Data: strings.NewReader(err.Error())}, nil
+	}
+	user_id := oas.UserId(id)
+	return &user_id, nil
+}
+
 func (s *userService) ProfileUserIDGet(ctx context.Context, params oas.ProfileUserIDGetParams) (oas.ProfileUserIDGetRes, error) {
 	userMetadata := ctx.Value(UserMetadataKey)
 

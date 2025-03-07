@@ -70,3 +70,12 @@ func (UnimplementedHandler) ProfileUserIDPost(ctx context.Context, req *ProfileU
 func (UnimplementedHandler) RegisterPost(ctx context.Context, req *CreateUserRequest) (r RegisterPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
+
+// UserLoginGet implements GET /user/{login} operation.
+//
+// Returns user id of user with that login, or 404 if there is no such user.
+//
+// GET /user/{login}
+func (UnimplementedHandler) UserLoginGet(ctx context.Context, params UserLoginGetParams) (r UserLoginGetRes, _ error) {
+	return r, ht.ErrNotImplemented
+}

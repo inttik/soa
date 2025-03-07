@@ -49,6 +49,8 @@ paths:
     post:
       summary: Authentication of user
       description: Checks that you is the user and, if so, returns JWT token.
+      security:
+        - {}
       requestBody: 
         required: true
         content:
@@ -87,7 +89,28 @@ paths:
             text/html:
               schema:
                 $ref: "#/components/schemas/errorMessage"
-
+  /user/{login}:
+    get:
+      summary: Get user id
+      description: Returns user id of user with that login, or 404 if there is no such user.
+      security:
+        - {}
+      parameters:
+        - $ref: "#/components/parameters/login"
+      responses:
+        200:
+          description: User exists, return its user userId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userId"
+        404:
+          description: No such user
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+      
   /profile/{user_id}:
     get:
       summary: Get user profile information
@@ -271,6 +294,15 @@ components:
       examples:
         simple:
           value: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    login:
+      name: login
+      in: path
+      required: true
+      schema:
+          $ref: "#/components/schemas/loginString"
+      examples:
+        simple:
+          value: "admin"
   schemas:
     jwtToken:
       type: string
