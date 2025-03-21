@@ -1,0 +1,35 @@
+services:
+  gateway-service:
+    restart: always
+    image: gateway-service
+    build: ./gateway_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users-service
+  users-service:
+    restart: always
+    image: users-service
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: usersservice
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: users
+    build: ./users_service
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: usersservice
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: users
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -19,7 +19,7 @@ model {
     }
     usersService = component 'Users service' {
         description 'Управление авторизацией и данными о пользователях'
-        technology 'технология: ???'
+        technology 'технология: Go'
     }
     postsSevice = component 'Posts service' {
         description 'Управление постами и комментариями'

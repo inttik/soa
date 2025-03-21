@@ -1,0 +1,466 @@
+openapi: 3.0.3
+info:
+  title: Users service
+  description: Api for users control
+  version: 1.0.0
+servers:
+  - url: http://users_service/v1/
+paths: 
+  /register:
+    description: Creating users
+    post:
+      summary: Register new user
+      description: Checks if user can be created and, if so, creates it and returns user_id. Only root can create root users.
+      security:
+        - {}
+        - bearerHttpAuthentication: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUserRequest" 
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userId"
+        400:
+          description: Provided arguments have incorrect format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+              examples:
+                badFormat:
+                  value: Login format is incorrect.
+                alreadyExists:
+                  value: User with that login/email already exists.
+        403:
+          description: Try to create root user, while not root
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+
+  /login:
+    post:
+      summary: Authentication of user
+      description: Checks that you is the user and, if so, returns JWT token.
+      security:
+        - {}
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loginUserRequest"
+            examples:
+              user:
+                value:
+                  login: login1231
+                  password: Qhfs32eWefs
+      responses: 
+        200:
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - token
+                  - user_id
+                properties:
+                  token:
+                    $ref: "#/components/schemas/jwtToken"
+                  user_id:
+                    $ref: "#/components/schemas/userId"
+        400:
+          description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        404:
+          description: User not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+  /user/{login}:
+    get:
+      summary: Get user id
+      description: Returns user id of user with that login, or 404 if there is no such user.
+      security:
+        - {}
+      parameters:
+        - $ref: "#/components/parameters/login"
+      responses:
+        200:
+          description: User exists, return its user userId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userId"
+        404:
+          description: No such user
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+      
+  /profile/{user_id}:
+    get:
+      summary: Get user profile information
+      description: Get all user profile information.
+      security:
+        - {}
+        - bearerHttpAuthentication: []
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profileInfo"
+        404:
+          description: User not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+    post:
+      summary: Update user profile
+      description: Check if user profile can be update by current user and, if so, updates it.
+      security:
+        - bearerHttpAuthentication: []
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/profileUpdate"
+            examples:
+              nameUpdate:
+                value: 
+                  firstName: "Ivan"
+                  lastName: "Ivanov"
+      responses:
+        200:
+          description: Updated successfully, returns new information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profileInfo"
+        400: 
+          description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        401:
+          description: Unauthorized 
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        403:
+          description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        404:
+          description: User not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+
+  /friends/{user_id}:
+    get:
+      summary: Get friends of user
+      description: |
+        Returns all public friends_id of user.
+        If client has private access to user_id (client is
+        root or is user_id), then friend aliasas are returned
+        as well as friend pairs metadata.
+      security:
+        - {}
+        - bearerHttpAuthentication: []
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Friends information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/friendList"
+        400:
+          description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        403:
+          description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        404:
+          description: User not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+    post:
+      summary: Update friends state of user.
+      description: Add, update, or remove friend of user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      security:
+        - bearerHttpAuthentication: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/friendModify"
+      responses:
+        200:
+          description: Successfully updated. Return current friend state
+          content:
+            application/json:
+              schema:
+                type: object
+                description: |
+                  If add/modify request, contains current information.
+                  If delete request,  contains nothing.
+                properties:
+                  friend:
+                    $ref: "#/components/schemas/friendObject"
+        400:
+          description: Bad format
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        401:
+          description: Unauthorized
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        403:
+          description: Operation not allowed
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+        404:
+          description: User of friend not found
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/errorMessage"
+              examples:
+                UserNotFound:
+                  value: User {user_id} not found.
+                FriendNotFound:
+                  value: Friend {friend_id} not found.
+
+components:
+  securitySchemes:
+    bearerHttpAuthentication:
+      description: Bearer token using a JWT
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    userId:
+      name: user_id
+      in: path
+      required: true
+      schema:
+          $ref: "#/components/schemas/userId"
+      examples:
+        simple:
+          value: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    login:
+      name: login
+      in: path
+      required: true
+      schema:
+          $ref: "#/components/schemas/loginString"
+      examples:
+        simple:
+          value: "admin"
+  schemas:
+    jwtToken:
+      type: string
+      description: A JWT token, containing user_id, root flag and expires info
+      maxLength: 1023
+      format: jwt
+    errorMessage:
+      type: string
+      description: A text message describing error
+      maxLength: 255
+    userId:
+      type: string
+      format: uuid
+    loginString:
+      type: string
+      maxLength: 255
+    passwordString:
+      type: string
+      format: password
+      description: hashed value of (password + salt)
+      maxLength: 255
+    emailString:
+      type: string
+      format: email
+      maxLength: 255
+    rootFlag:
+      type: boolean
+      default: false
+    nameString:
+      type: string
+      maxLength: 255
+    linkString:
+      type: string
+      format: uri
+      example: https://example.org/test.png
+    birthString:
+      type: string
+      format: date
+    telephoneString:
+      type: string
+      maxLength: 20
+      minLength: 15
+      pattern: ^(\+?\d{1,2}\s)\(\d{3}\)\s\d{3}-\d{2}-\d{2}$
+      example: "+7 (900) 000-00-00"
+    dateString:
+      type: string
+      format: date-time
+    friendAliasString:
+      type: string
+      maxLength: 255
+    friendSubscribedFlag:
+      type: boolean
+    friendHiddenFlag:
+      type: boolean
+    friendPairedFlag:
+      type: boolean
+    createUserRequest:
+      type: object
+      required:
+      - login
+      - password
+      - email
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        password:
+          $ref: "#/components/schemas/passwordString"
+        email:
+          $ref: "#/components/schemas/emailString"
+        root:
+          $ref: "#/components/schemas/rootFlag"
+    loginUserRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        password:
+          $ref: "#/components/schemas/passwordString"
+    profileInfo:
+      type: object
+      required:
+        - login
+        - email
+      properties:
+        login:
+          $ref: "#/components/schemas/loginString"
+        email:
+          $ref: "#/components/schemas/emailString"
+        root:
+          $ref: "#/components/schemas/rootFlag"
+        firstName:
+          $ref: "#/components/schemas/nameString"
+        lastName:
+          $ref: "#/components/schemas/nameString"
+        imageLink:
+          $ref: "#/components/schemas/linkString"
+        birthDate:
+          $ref: "#/components/schemas/birthString"
+        telephone:
+          $ref: "#/components/schemas/telephoneString"
+        regDate:
+          $ref: "#/components/schemas/dateString"
+        lastModify:
+          $ref: "#/components/schemas/dateString"
+    profileUpdate:
+      type: object
+      properties:
+        email:
+          $ref: "#/components/schemas/emailString"
+        firstName:
+          $ref: "#/components/schemas/nameString"
+        lastName:
+          $ref: "#/components/schemas/nameString"
+        imageLink:
+          $ref: "#/components/schemas/linkString"
+        birthDate:
+          $ref: "#/components/schemas/birthString"
+        telephone:
+          $ref: "#/components/schemas/telephoneString"
+    friendObject:
+      type: object
+      required:
+        - friend_id
+      properties:
+        friend_id:
+          $ref: "#/components/schemas/userId"
+        alias:
+          $ref: "#/components/schemas/friendAliasString"
+        subscibed:
+          $ref: "#/components/schemas/friendSubscribedFlag"
+        hidden:
+          $ref: "#/components/schemas/friendHiddenFlag"
+        paired:
+          $ref: "#/components/schemas/friendPairedFlag"
+        friendedAt:
+          $ref: "#/components/schemas/dateString"
+        lastModify:
+          $ref: "#/components/schemas/dateString"
+    friendList:
+      type: array
+      items:
+        $ref: "#/components/schemas/friendObject"
+    friendModify:
+      type: object  
+      required:
+        - friend_id
+      properties:
+        friend_id:
+          $ref: "#/components/schemas/userId"
+        alias:
+          $ref: "#/components/schemas/friendAliasString"
+        subscibed:
+          $ref: "#/components/schemas/friendSubscribedFlag"
+        hidden:
+          $ref: "#/components/schemas/friendHiddenFlag"
+        delete:
+          type: boolean  
+          description: if true, remove friend
