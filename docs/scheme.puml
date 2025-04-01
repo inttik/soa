@@ -8,9 +8,9 @@ package "Posts service" #faf3b6{
   table(Posts) #f7ea77{
     primary_key(post_id): UUID
     --
+    columnt(title): VARCHAR(255)
     column(content): TEXT
-    column(image_link): VARCHAR(255)
-    column(friends_only): BOOL
+    column(private): BOOL
     column(publish_date): DATETIME
     column(last_modify): DATATIME
     foreign_key(author_id): UUID
@@ -21,19 +21,18 @@ package "Posts service" #faf3b6{
     column(content): TEXT
     column(publish_date): DATETIME
     column(last_modify): DATATIME
+    foreign_key(reply_to): UUID optional
     foreign_key(author_id): UUID
     foreign_key(post_id): UUID
   }
-  table(Replies) #f7ea77 {
+  table(Tags) #f7ea77 {
     primary_key(id): UUID
     --
-    foreign_key(comment_id): UUID
-    foreign_key(reply_to): UUID
+    column(Tag): VARCHAR(20)
+    foreign_key(post_id): UUID
   }
   Posts <.. Comments: " post_id"
-  Replies <.. Comments: " comment_id"
-  Replies ..> Comments: " reply_to"
-
+  Posts <.. Tags: "post_id
 }
 
 package "Stats service" #PaleGreen {
