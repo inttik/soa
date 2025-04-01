@@ -54,6 +54,12 @@ type Handler interface {
 	//
 	// GET /user/{login}
 	UserLoginGet(ctx context.Context, params UserLoginGetParams) (UserLoginGetRes, error)
+	// WhoamiGet implements GET /whoami operation.
+	//
+	// Returns information about your auth key.
+	//
+	// GET /whoami
+	WhoamiGet(ctx context.Context) (WhoamiGetRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

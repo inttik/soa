@@ -79,3 +79,12 @@ func (UnimplementedHandler) RegisterPost(ctx context.Context, req *CreateUserReq
 func (UnimplementedHandler) UserLoginGet(ctx context.Context, params UserLoginGetParams) (r UserLoginGetRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
+
+// WhoamiGet implements GET /whoami operation.
+//
+// Returns information about your auth key.
+//
+// GET /whoami
+func (UnimplementedHandler) WhoamiGet(ctx context.Context) (r WhoamiGetRes, _ error) {
+	return r, ht.ErrNotImplemented
+}

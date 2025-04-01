@@ -1,0 +1,111 @@
+syntax = "proto3";
+package posts;
+option go_package="./;posts_grpc";
+
+import "google/protobuf/timestamp.proto";
+
+service PostService {
+    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+
+    rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
+    rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);
+
+    rpc GetPost(GetPostRequest) returns (GetPostResponse);
+    rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
+}
+
+message PostId {
+    string id = 1;
+}
+
+message Post {
+    PostId id = 1;
+    string title = 2;
+    string content = 3;
+    string author_id = 4;
+    bool is_private = 5;
+    google.protobuf.Timestamp publish_date = 6;
+    google.protobuf.Timestamp last_modify = 7;
+    repeated string tags = 8;
+}
+
+message PostUpdate {
+    PostId id = 1;
+    string new_title = 2;
+    string new_content = 3;
+    bool is_private = 5;
+    bool change_private = 6;
+    repeated string add_tags = 7;
+    repeated string remove_tags = 8;
+}
+
+message Actor {
+    string user_id = 1;
+    bool is_root = 2;
+}
+
+enum Code {
+    Bad = 0;
+    Ok = 200;
+    BadRequest = 400;
+    Forbidden = 403;
+    NotFound = 404;
+}
+
+message CreatePostRequest {
+    string title = 1;
+    string content = 2;
+    bool is_private = 4;
+    repeated string tags = 5;
+    Actor actor = 6;
+}
+
+message CreatePostResponse {
+    Code code = 1;
+    Post post = 2;
+}
+
+message UpdatePostRequest {
+    PostUpdate update = 1;
+    Actor actor = 2;
+}
+
+message UpdatePostResponse {
+    Code code = 1;
+    Post post = 2;
+}
+
+message DeletePostRequest {
+    PostId id = 1;
+    Actor actor = 2;
+}
+
+message DeletePostResponse {
+    Code code = 1;
+}
+
+message GetPostRequest {
+    PostId id = 1;
+    Actor actor = 2;
+}
+
+message GetPostResponse {
+    Code code = 1;
+    Post post = 2;
+}
+
+
+message ListPostsRequest {
+    uint32 page = 1;
+    uint32 page_limit = 2;
+    bool with_hidden = 3;
+    Actor actor = 4;
+}
+
+message ListPostsResponse {
+    Code code = 1;
+    repeated Post posts = 2;
+    uint32 from = 3;
+    uint32 to = 4;
+    uint32 total = 5;
+}

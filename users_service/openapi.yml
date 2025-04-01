@@ -89,6 +89,32 @@ paths:
             text/html:
               schema:
                 $ref: "#/components/schemas/errorMessage"
+  /whoami:
+    get:
+      summary: Returns information about your auth key
+      security:
+        - bearerHttpAuthentication: []
+      responses:
+        200:
+          description: Everything allright, giving info
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user_id
+                  - is_root
+                properties:
+                  user_id:
+                    $ref: "#/components/schemas/userId"
+                  is_root:
+                    $ref: "#/components/schemas/rootFlag"
+        403:
+            description: Bad token
+            content:
+              text/html:
+                schema:
+                  $ref: "#/components/schemas/errorMessage"
   /user/{login}:
     get:
       summary: Get user id

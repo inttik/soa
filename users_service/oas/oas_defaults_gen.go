@@ -17,3 +17,11 @@ func (s *ProfileInfo) setDefaults() {
 		s.Root.SetTo(val)
 	}
 }
+
+// setDefaults set default value of fields.
+func (s *WhoamiGetOK) setDefaults() {
+	{
+		val := RootFlag(false)
+		s.IsRoot = val
+	}
+}

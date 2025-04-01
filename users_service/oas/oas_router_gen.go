@@ -50,7 +50,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		switch elem[0] {
 		case '/': // Prefix: "/"
-			origElem := elem
+
 			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
@@ -62,7 +62,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			switch elem[0] {
 			case 'f': // Prefix: "friends/"
-				origElem := elem
+
 				if l := len("friends/"); len(elem) >= l && elem[0:l] == "friends/" {
 					elem = elem[l:]
 				} else {
@@ -70,7 +70,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Param: "user_id"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -92,9 +96,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				elem = origElem
 			case 'l': // Prefix: "login"
-				origElem := elem
+
 				if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
 					elem = elem[l:]
 				} else {
@@ -113,9 +116,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				elem = origElem
 			case 'p': // Prefix: "profile/"
-				origElem := elem
+
 				if l := len("profile/"); len(elem) >= l && elem[0:l] == "profile/" {
 					elem = elem[l:]
 				} else {
@@ -123,7 +125,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Param: "user_id"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -145,9 +151,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				elem = origElem
 			case 'r': // Prefix: "register"
-				origElem := elem
+
 				if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
 					elem = elem[l:]
 				} else {
@@ -166,9 +171,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				elem = origElem
 			case 'u': // Prefix: "user/"
-				origElem := elem
+
 				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
 					elem = elem[l:]
 				} else {
@@ -176,7 +180,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				// Param: "login"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -194,10 +202,28 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				elem = origElem
+			case 'w': // Prefix: "whoami"
+
+				if l := len("whoami"); len(elem) >= l && elem[0:l] == "whoami" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleWhoamiGetRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+
 			}
 
-			elem = origElem
 		}
 	}
 	s.notFound(w, r)
@@ -279,7 +305,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 		}
 		switch elem[0] {
 		case '/': // Prefix: "/"
-			origElem := elem
+
 			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
@@ -291,7 +317,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			}
 			switch elem[0] {
 			case 'f': // Prefix: "friends/"
-				origElem := elem
+
 				if l := len("friends/"); len(elem) >= l && elem[0:l] == "friends/" {
 					elem = elem[l:]
 				} else {
@@ -299,7 +325,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				// Param: "user_id"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -327,9 +357,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-				elem = origElem
 			case 'l': // Prefix: "login"
-				origElem := elem
+
 				if l := len("login"); len(elem) >= l && elem[0:l] == "login" {
 					elem = elem[l:]
 				} else {
@@ -352,9 +381,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-				elem = origElem
 			case 'p': // Prefix: "profile/"
-				origElem := elem
+
 				if l := len("profile/"); len(elem) >= l && elem[0:l] == "profile/" {
 					elem = elem[l:]
 				} else {
@@ -362,7 +390,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				// Param: "user_id"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -390,9 +422,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-				elem = origElem
 			case 'r': // Prefix: "register"
-				origElem := elem
+
 				if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
 					elem = elem[l:]
 				} else {
@@ -415,9 +446,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-				elem = origElem
 			case 'u': // Prefix: "user/"
-				origElem := elem
+
 				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
 					elem = elem[l:]
 				} else {
@@ -425,7 +455,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				// Param: "login"
-				// Leaf parameter
+				// Leaf parameter, slashes are prohibited
+				idx := strings.IndexByte(elem, '/')
+				if idx >= 0 {
+					break
+				}
 				args[0] = elem
 				elem = ""
 
@@ -445,10 +479,32 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-				elem = origElem
+			case 'w': // Prefix: "whoami"
+
+				if l := len("whoami"); len(elem) >= l && elem[0:l] == "whoami" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "GET":
+						r.name = WhoamiGetOperation
+						r.summary = "Returns information about your auth key"
+						r.operationID = ""
+						r.pathPattern = "/whoami"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
 			}
 
-			elem = origElem
 		}
 	}
 	return r, false
