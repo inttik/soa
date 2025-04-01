@@ -5,3 +5,5 @@
 # local launch
 /users_service/launch.bash
 /users_service/tmp
+/posts_service/launch.bash
+/posts_service/tmp

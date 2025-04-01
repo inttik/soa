@@ -1,6 +1,6 @@
 FROM golang:1.24
 
-WORKDIR /users_service
+WORKDIR /posts_service
 
 COPY go.mod go.sum ./
 RUN go mod download
@@ -8,5 +8,5 @@ RUN go mod download
 COPY . .
 RUN go build -o main ./cmd
 
-EXPOSE 8080
+EXPOSE 50001
 CMD ["./main"]
