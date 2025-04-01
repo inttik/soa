@@ -8,7 +8,7 @@ package "Posts service" #faf3b6{
   table(Posts) #f7ea77{
     primary_key(post_id): UUID
     --
-    columnt(title): VARCHAR(255)
+    column(title): VARCHAR(255)
     column(content): TEXT
     column(private): BOOL
     column(publish_date): DATETIME
