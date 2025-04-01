@@ -4,7 +4,7 @@ info:
   description: Api for users control
   version: 1.0.0
 servers:
-  - url: http://users_service/v1/
+  - url: http://users_service/users/v1/
 paths: 
   /register:
     description: Creating users

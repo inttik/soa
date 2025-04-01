@@ -41,7 +41,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: users
     volumes:
-      - users_data:/var/lib/postgresql/users_data
+      - users_data:/var/lib/postgresql/data
 
   posts_postgres:
     image: postgres:latest
@@ -50,7 +50,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: posts
     volumes:
-      - posts_data:/var/lib/postgresql/posts_data
+      - posts_data:/var/lib/postgresql/data
 
 volumes:
   users_data:
