@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 )
 
@@ -27,7 +26,6 @@ func (h *PostsHandler) authMiddleware() func(next http.Handler) http.Handler {
 
 			// 3. Добавляем userInfo в контекст
 			newCtx := context.WithValue(r.Context(), "userInfo", userInfo)
-			log.Println("add: ", userInfo)
 
 			// 4. Продолжаем цепочку middleware
 			next.ServeHTTP(w, r.WithContext(newCtx))

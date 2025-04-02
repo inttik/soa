@@ -54,5 +54,7 @@ services:
 
 volumes:
   users_data:
+    driver: local
   posts_data:
+    driver: local
 

@@ -20,7 +20,7 @@ func (s *mockStorage) CreatePost(req *posts_grpc.CreatePostRequest) (*posts_grpc
 	new_uuid := uuid.New().String()
 
 	post := posts_grpc.Post{
-		Id:          &posts_grpc.PostId{Id: new_uuid},
+		Id:          new_uuid,
 		Title:       req.Title,
 		Content:     req.Content,
 		AuthorId:    req.Actor.UserId,
@@ -42,7 +42,7 @@ func (s *mockStorage) UpdatePost(req *posts_grpc.PostUpdate) (*posts_grpc.Post, 
 	s.p.mx.Lock()
 	defer s.p.mx.Unlock()
 
-	post := s.p.data[req.GetId().GetId()]
+	post := s.p.data[req.GetId()]
 	if req.GetNewTitle() != "" {
 		post.Title = req.GetNewTitle()
 	}
@@ -73,20 +73,20 @@ func (s *mockStorage) UpdatePost(req *posts_grpc.PostUpdate) (*posts_grpc.Post, 
 	return post, nil
 }
 
-func (s *mockStorage) DeletePost(id *posts_grpc.PostId) error {
+func (s *mockStorage) DeletePost(id string) error {
 	s.p.mx.Lock()
 	defer s.p.mx.Unlock()
 
-	delete(s.p.data, id.GetId())
+	delete(s.p.data, id)
 
 	return nil
 }
 
-func (s *mockStorage) GetPost(id *posts_grpc.PostId) (*posts_grpc.Post, error) {
+func (s *mockStorage) GetPost(id string) (*posts_grpc.Post, error) {
 	s.p.mx.Lock()
 	defer s.p.mx.Unlock()
 
-	post, ok := s.p.data[id.GetId()]
+	post, ok := s.p.data[id]
 	if !ok {
 		return nil, errors.New("post not found")
 	}

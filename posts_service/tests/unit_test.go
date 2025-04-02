@@ -130,7 +130,7 @@ func TestUpdate(t *testing.T) {
 		user:   s.user_a,
 		exp200: true,
 	}, t)
-	postID := createResp.GetPost().GetId().GetId()
+	postID := createResp.GetPost().GetId()
 
 	tests := []struct {
 		name string
@@ -141,7 +141,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:            &posts_grpc.PostId{Id: postID},
+						Id:            postID,
 						NewTitle:      "New Title",
 						NewContent:    "New Content",
 						ChangePrivate: true,
@@ -159,7 +159,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:       &posts_grpc.PostId{Id: postID},
+						Id:       postID,
 						NewTitle: "New Title 2",
 					},
 				},
@@ -172,7 +172,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:         &posts_grpc.PostId{Id: postID},
+						Id:         postID,
 						NewContent: "New Content 2",
 					},
 				},
@@ -185,7 +185,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:      &posts_grpc.PostId{Id: postID},
+						Id:      postID,
 						AddTags: []string{"c", "d", "e"},
 					},
 				},
@@ -198,7 +198,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:         &posts_grpc.PostId{Id: postID},
+						Id:         postID,
 						RemoveTags: []string{"b", "e"},
 					},
 				},
@@ -211,7 +211,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:            &posts_grpc.PostId{Id: postID},
+						Id:            postID,
 						RemoveTags:    []string{"b", "e"},
 						ChangePrivate: true,
 						IsPrivate:     false,
@@ -226,7 +226,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:            &posts_grpc.PostId{Id: postID},
+						Id:            postID,
 						RemoveTags:    []string{"b", "e"},
 						ChangePrivate: true,
 						IsPrivate:     false,
@@ -241,7 +241,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id: &posts_grpc.PostId{Id: postID},
+						Id: postID,
 					},
 				},
 				user:   s.user_a,
@@ -253,7 +253,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:        &posts_grpc.PostId{Id: postID},
+						Id:        postID,
 						IsPrivate: true,
 					},
 				},
@@ -266,7 +266,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:        &posts_grpc.PostId{Id: postID},
+						Id:        postID,
 						IsPrivate: false,
 					},
 				},
@@ -279,7 +279,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:       &posts_grpc.PostId{Id: postID},
+						Id:       postID,
 						NewTitle: "New Title 3",
 					},
 				},
@@ -293,7 +293,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:       &posts_grpc.PostId{Id: postID},
+						Id:       postID,
 						NewTitle: "Drop",
 					},
 				},
@@ -306,7 +306,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:       &posts_grpc.PostId{Id: s.user_a},
+						Id:       s.user_a,
 						NewTitle: "Drop",
 					},
 				},
@@ -331,7 +331,7 @@ func TestUpdate(t *testing.T) {
 			uh: UpdateHelper{
 				req: &posts_grpc.UpdatePostRequest{
 					Update: &posts_grpc.PostUpdate{
-						Id:       &posts_grpc.PostId{Id: postID},
+						Id:       postID,
 						NewTitle: "Drop",
 					},
 				},
@@ -385,7 +385,7 @@ func TestDelete(t *testing.T) {
 			name: "delete non-existent post",
 			dh: DeleteHelper{
 				req: &posts_grpc.DeletePostRequest{
-					Id: &posts_grpc.PostId{Id: uuid.NewString()},
+					Id: uuid.NewString(),
 				},
 				user:   s.user_a,
 				exp404: true,
@@ -395,7 +395,7 @@ func TestDelete(t *testing.T) {
 			name: "empty post id",
 			dh: DeleteHelper{
 				req: &posts_grpc.DeletePostRequest{
-					Id: &posts_grpc.PostId{Id: ""},
+					Id: "",
 				},
 				user:   s.user_a,
 				exp400: true,
@@ -405,7 +405,7 @@ func TestDelete(t *testing.T) {
 			name: "invalid post id format",
 			dh: DeleteHelper{
 				req: &posts_grpc.DeletePostRequest{
-					Id: &posts_grpc.PostId{Id: "invalid-uuid"},
+					Id: "invalid-uuid",
 				},
 				user:   s.user_a,
 				exp400: true,
@@ -535,7 +535,7 @@ func TestGet(t *testing.T) {
 		{
 			name: "get non-existent post",
 			gh: GetHelper{
-				req:    &posts_grpc.GetPostRequest{Id: &posts_grpc.PostId{Id: uuid.NewString()}},
+				req:    &posts_grpc.GetPostRequest{Id: uuid.NewString()},
 				user:   s.user_a,
 				exp404: true,
 			},
@@ -543,14 +543,14 @@ func TestGet(t *testing.T) {
 		{
 			name: "empty post id",
 			gh: GetHelper{
-				req:    &posts_grpc.GetPostRequest{Id: &posts_grpc.PostId{Id: ""}},
+				req:    &posts_grpc.GetPostRequest{Id: ""},
 				exp400: true,
 			},
 		},
 		{
 			name: "invalid post id format",
 			gh: GetHelper{
-				req:    &posts_grpc.GetPostRequest{Id: &posts_grpc.PostId{Id: "invalid-uuid"}},
+				req:    &posts_grpc.GetPostRequest{Id: "invalid-uuid"},
 				exp400: true,
 			},
 		},
@@ -562,7 +562,7 @@ func TestGet(t *testing.T) {
 
 			if test.gh.exp200 {
 				assert.NotNil(t, resp.GetPost())
-				assert.Equal(t, test.gh.req.GetId().GetId(), resp.GetPost().GetId().GetId())
+				assert.Equal(t, test.gh.req.GetId(), resp.GetPost().GetId())
 
 				if strings.Contains(test.name, "private") && (test.gh.root == false && test.gh.user != s.user_a) {
 					assert.Empty(t, resp.GetPost().GetContent())

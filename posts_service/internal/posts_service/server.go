@@ -30,24 +30,32 @@ func check_uuid(id string) error {
 	return err
 }
 
+func CreatePostBad(text string) (*grpc.CreatePostResponse, error) {
+	resp := grpc.CreatePostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
+	}
+	return &resp, nil
+}
+
 func (s *server) CreatePost(_ context.Context, req *grpc.CreatePostRequest) (*grpc.CreatePostResponse, error) {
 	if req.Title == "" {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("Field 'title' not found")
 	}
 	if len(req.Title) > 255 {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("Title too long")
 	}
 	if req.Content == "" {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("Field 'content' not found")
 	}
 	if req.Actor == nil {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("Actor not found")
 	}
 	if req.Actor.UserId == "" {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("User id not found")
 	}
 	if check_uuid(req.Actor.UserId) != nil {
-		return &CREATE_BAD_REQUEST, nil
+		return CreatePostBad("User id is not uuid")
 	}
 
 	post, err := s.manager.CreatePost(req)
@@ -57,35 +65,46 @@ func (s *server) CreatePost(_ context.Context, req *grpc.CreatePostRequest) (*gr
 	return &grpc.CreatePostResponse{Code: grpc.Code_Ok, Post: post}, nil
 }
 
+func UpdatePostBad(text string) (*grpc.UpdatePostResponse, error) {
+	resp := grpc.UpdatePostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
+	}
+	return &resp, nil
+}
+
 func (s *server) UpdatePost(_ context.Context, req *grpc.UpdatePostRequest) (*grpc.UpdatePostResponse, error) {
 	if req.Update == nil {
-		return &UPDATE_BAD_REQUEST, nil
+		return UpdatePostBad("No update")
 	}
-	if req.Update.Id == nil {
-		return &UPDATE_BAD_REQUEST, nil
-	}
-	if req.Update.Id.Id == "" {
-		return &UPDATE_BAD_REQUEST, nil
+	if req.Update.Id == "" {
+		return UpdatePostBad("Post id not found")
 	}
 	if req.Actor == nil {
-		return &UPDATE_BAD_REQUEST, nil
+		return UpdatePostBad("Actor not found")
 	}
 	if req.Actor.UserId == "" {
-		return &UPDATE_BAD_REQUEST, nil
+		return UpdatePostBad("User id not found")
 	}
-	if check_uuid(req.Update.Id.Id) != nil {
-		return &UPDATE_BAD_REQUEST, nil
+	if check_uuid(req.Update.Id) != nil {
+		return UpdatePostBad("Post id is not UUID")
 	}
 	if check_uuid(req.Actor.UserId) != nil {
-		return &UPDATE_BAD_REQUEST, nil
+		return UpdatePostBad("User id is not UUID")
 	}
 
 	post, err := s.manager.GetPost(req.Update.Id)
 	if err != nil {
-		return &grpc.UpdatePostResponse{Code: grpc.Code_NotFound}, nil
+		return &grpc.UpdatePostResponse{
+			Code:  grpc.Code_NotFound,
+			Error: "Post not found",
+		}, nil
 	}
 	if post.AuthorId != req.Actor.UserId && !req.Actor.IsRoot {
-		return &grpc.UpdatePostResponse{Code: grpc.Code_Forbidden}, nil
+		return &grpc.UpdatePostResponse{
+			Code:  grpc.Code_Forbidden,
+			Error: "User can't modify the post",
+		}, nil
 	}
 	post, err = s.manager.UpdatePost(req.Update)
 	if err != nil {
@@ -94,32 +113,43 @@ func (s *server) UpdatePost(_ context.Context, req *grpc.UpdatePostRequest) (*gr
 	return &grpc.UpdatePostResponse{Code: grpc.Code_Ok, Post: post}, nil
 }
 
-func (s *server) DeletePost(_ context.Context, req *grpc.DeletePostRequest) (*grpc.DeletePostResponse, error) {
-	if req.Id == nil {
-		return &DELETE_BAD_REQUEST, nil
+func DeletePostBad(text string) (*grpc.DeletePostResponse, error) {
+	resp := grpc.DeletePostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
 	}
-	if req.Id.Id == "" {
-		return &DELETE_BAD_REQUEST, nil
+	return &resp, nil
+}
+
+func (s *server) DeletePost(_ context.Context, req *grpc.DeletePostRequest) (*grpc.DeletePostResponse, error) {
+	if req.Id == "" {
+		return DeletePostBad("Post id not found")
 	}
 	if req.Actor == nil {
-		return &DELETE_BAD_REQUEST, nil
+		return DeletePostBad("Actor not found")
 	}
 	if req.Actor.UserId == "" {
-		return &DELETE_BAD_REQUEST, nil
+		return DeletePostBad("User id not found")
 	}
-	if check_uuid(req.Id.Id) != nil {
-		return &DELETE_BAD_REQUEST, nil
+	if check_uuid(req.Id) != nil {
+		return DeletePostBad("Post id is not UUID")
 	}
 	if check_uuid(req.Actor.UserId) != nil {
-		return &DELETE_BAD_REQUEST, nil
+		return DeletePostBad("User id is not UUID")
 	}
 
 	post, err := s.manager.GetPost(req.Id)
 	if err != nil {
-		return &grpc.DeletePostResponse{Code: grpc.Code_NotFound}, nil
+		return &grpc.DeletePostResponse{
+			Code:  grpc.Code_NotFound,
+			Error: "Post not found",
+		}, nil
 	}
 	if post.AuthorId != req.Actor.UserId && !req.Actor.IsRoot {
-		return &grpc.DeletePostResponse{Code: grpc.Code_Forbidden}, nil
+		return &grpc.DeletePostResponse{
+			Code:  grpc.Code_Forbidden,
+			Error: "User can't delete post",
+		}, nil
 	}
 	err = s.manager.DeletePost(post.Id)
 	if err != nil {
@@ -128,45 +158,64 @@ func (s *server) DeletePost(_ context.Context, req *grpc.DeletePostRequest) (*gr
 	return &grpc.DeletePostResponse{Code: grpc.Code_Ok}, nil
 }
 
-func (s *server) GetPost(_ context.Context, req *grpc.GetPostRequest) (*grpc.GetPostResponse, error) {
-	if req.Id == nil {
-		return &GET_BAD_REQUEST, nil
+func GetPostBad(text string) (*grpc.GetPostResponse, error) {
+	resp := grpc.GetPostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
 	}
-	if req.Id.Id == "" {
-		return &GET_BAD_REQUEST, nil
+	return &resp, nil
+}
+
+func (s *server) GetPost(_ context.Context, req *grpc.GetPostRequest) (*grpc.GetPostResponse, error) {
+	if req.Id == "" {
+		return GetPostBad("Post id not found")
 	}
 	if req.Actor == nil {
-		return &GET_BAD_REQUEST, nil
+		return GetPostBad("Actor not found")
 	}
 	if req.Actor.UserId == "" {
-		return &GET_BAD_REQUEST, nil
+		return GetPostBad("User id not found")
 	}
-	if check_uuid(req.Id.Id) != nil {
-		return &GET_BAD_REQUEST, nil
+	if check_uuid(req.Id) != nil {
+		return GetPostBad("Post id is not UUID")
 	}
 	if check_uuid(req.Actor.UserId) != nil {
-		return &GET_BAD_REQUEST, nil
+		return GetPostBad("User id is not UUID")
 	}
 
 	post, err := s.manager.GetPost(req.Id)
 	if err != nil {
-		return &grpc.GetPostResponse{Code: grpc.Code_NotFound}, nil
+		return &grpc.GetPostResponse{
+			Code:  grpc.Code_NotFound,
+			Error: "Post not found",
+		}, nil
 	}
 	if post.IsPrivate && post.AuthorId != req.Actor.UserId && !req.Actor.IsRoot {
-		return &grpc.GetPostResponse{Code: grpc.Code_Forbidden}, nil
+		return &grpc.GetPostResponse{
+			Code:  grpc.Code_Forbidden,
+			Error: "User can't get that post",
+		}, nil
 	}
 	return &grpc.GetPostResponse{Code: grpc.Code_Ok, Post: post}, nil
 }
 
+func ListPostBad(text string) (*grpc.ListPostsResponse, error) {
+	resp := grpc.ListPostsResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
+	}
+	return &resp, nil
+}
+
 func (s *server) ListPosts(_ context.Context, req *grpc.ListPostsRequest) (*grpc.ListPostsResponse, error) {
 	if req.Actor == nil {
-		return &LIST_BAD_REQUEST, nil
+		return ListPostBad("Actor not found")
 	}
 	if req.Actor.UserId == "" {
-		return &LIST_BAD_REQUEST, nil
+		return ListPostBad("User id not found")
 	}
 	if check_uuid(req.Actor.UserId) != nil {
-		return &LIST_BAD_REQUEST, nil
+		return ListPostBad("User id is not UUID")
 	}
 
 	resp, err := s.manager.ListPosts(req)
