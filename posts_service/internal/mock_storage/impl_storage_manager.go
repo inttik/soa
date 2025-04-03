@@ -12,8 +12,8 @@ type mockStorage struct {
 	p posts
 }
 
-func NewMockStorage() mockStorage {
-	return mockStorage{posts{data: make(map[string]*posts_grpc.Post)}}
+func NewMockStorage() *mockStorage {
+	return &mockStorage{posts{data: make(map[string]*posts_grpc.Post)}}
 }
 
 func (s *mockStorage) CreatePost(req *posts_grpc.CreatePostRequest) (*posts_grpc.Post, error) {
@@ -69,6 +69,8 @@ func (s *mockStorage) UpdatePost(req *posts_grpc.PostUpdate) (*posts_grpc.Post, 
 		tags = append(tags, tag)
 	}
 	post.Tags = tags
+
+	post.LastModify = timestamppb.Now()
 
 	return post, nil
 }

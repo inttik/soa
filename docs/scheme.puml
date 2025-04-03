@@ -10,7 +10,8 @@ package "Posts service" #faf3b6{
     --
     column(title): VARCHAR(255)
     column(content): TEXT
-    column(private): BOOL
+    column(is_private): BOOL
+    column(tags): TEXT []
     column(publish_date): DATETIME
     column(last_modify): DATATIME
     foreign_key(author_id): UUID
@@ -23,12 +24,6 @@ package "Posts service" #faf3b6{
     column(last_modify): DATATIME
     foreign_key(reply_to): UUID optional
     foreign_key(author_id): UUID
-    foreign_key(post_id): UUID
-  }
-  table(Tags) #f7ea77 {
-    primary_key(id): UUID
-    --
-    column(Tag): VARCHAR(20)
     foreign_key(post_id): UUID
   }
   Posts <.. Comments: " post_id"

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	jwttoken "users/internal/jwt_token"
-	pass "users/internal/passhandler"
+	pass "users/internal/pass_handler"
 	storage "users/internal/storage_manager"
 	"users/oas"
 

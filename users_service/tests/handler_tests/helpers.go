@@ -7,7 +7,7 @@ import (
 	"users/handlers"
 	jwttoken "users/internal/jwt_token"
 	mockstorage "users/internal/mock_storage"
-	"users/internal/passhandler"
+	passhandler "users/internal/pass_handler"
 	"users/oas"
 
 	"github.com/stretchr/testify/assert"

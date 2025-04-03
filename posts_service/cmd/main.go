@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net"
-	mockstorage "posts/internal/mock_storage"
+	postgresstorage "posts/internal/postgres_storage"
 	"posts/internal/posts_grpc"
 	postsservice "posts/internal/posts_service"
 
@@ -11,8 +11,13 @@ import (
 )
 
 func main() {
-	storage := mockstorage.NewMockStorage()
-	server := postsservice.NewServer(&storage)
+	// storage := mockstorage.NewMockStorage()
+	storage, err := postgresstorage.NewPostgresStorage()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server := postsservice.NewServer(storage)
 
 	lis, err := net.Listen("tcp", ":50001")
 	if err != nil {

@@ -6,8 +6,8 @@ import (
 
 	handler "users/handlers"
 	jwttoken "users/internal/jwt_token"
-	passhandle "users/internal/passhandler"
-	"users/internal/postgresstorage"
+	passhandle "users/internal/pass_handler"
+	postgresstorage "users/internal/postgres_storage"
 	"users/oas"
 )
 

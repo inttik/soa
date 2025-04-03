@@ -20,7 +20,7 @@ type state struct {
 
 func (s *state) setup(t *testing.T) {
 	storage := mockstorage.NewMockStorage()
-	server := postsservice.NewServer(&storage)
+	server := postsservice.NewServer(storage)
 	s.server = &server
 	s.user_a = uuid.NewString()
 	s.user_b = uuid.NewString()
