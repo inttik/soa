@@ -6,8 +6,8 @@ import (
 
 	handler "users/handlers"
 	jwttoken "users/internal/jwt_token"
-	passhandle "users/internal/passhandler"
-	"users/internal/postgresstorage"
+	passhandle "users/internal/pass_handler"
+	postgresstorage "users/internal/postgres_storage"
 	"users/oas"
 )
 
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/v1/", http.StripPrefix("/v1", srv))
+	mux.Handle("/users/v1/", http.StripPrefix("/users/v1", srv))
 
 	log.Println("starting server")
 	if err := http.ListenAndServe(":8080", mux); err != nil {

@@ -1,8 +1,12 @@
-FROM nginx
+FROM golang:1.24
 
-WORKDIR /gateway_server
+WORKDIR /gateway_service
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN go build -o main ./cmd
 
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["./main"]

@@ -2,7 +2,7 @@ package passhandle_test
 
 import (
 	"testing"
-	passhandle "users/internal/passhandler"
+	passhandle "users/internal/pass_handler"
 	"users/oas"
 
 	"github.com/stretchr/testify/assert"

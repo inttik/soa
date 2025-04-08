@@ -1411,3 +1411,48 @@ func (s UserLoginGetNotFound) Read(p []byte) (n int, err error) {
 }
 
 func (*UserLoginGetNotFound) userLoginGetRes() {}
+
+// A text message describing error.
+// Ref: #/components/schemas/errorMessage
+type WhoamiGetForbidden struct {
+	Data io.Reader
+}
+
+// Read reads data from the Data reader.
+//
+// Kept to satisfy the io.Reader interface.
+func (s WhoamiGetForbidden) Read(p []byte) (n int, err error) {
+	if s.Data == nil {
+		return 0, io.EOF
+	}
+	return s.Data.Read(p)
+}
+
+func (*WhoamiGetForbidden) whoamiGetRes() {}
+
+type WhoamiGetOK struct {
+	UserID UserId   `json:"user_id"`
+	IsRoot RootFlag `json:"is_root"`
+}
+
+// GetUserID returns the value of UserID.
+func (s *WhoamiGetOK) GetUserID() UserId {
+	return s.UserID
+}
+
+// GetIsRoot returns the value of IsRoot.
+func (s *WhoamiGetOK) GetIsRoot() RootFlag {
+	return s.IsRoot
+}
+
+// SetUserID sets the value of UserID.
+func (s *WhoamiGetOK) SetUserID(val UserId) {
+	s.UserID = val
+}
+
+// SetIsRoot sets the value of IsRoot.
+func (s *WhoamiGetOK) SetIsRoot(val RootFlag) {
+	s.IsRoot = val
+}
+
+func (*WhoamiGetOK) whoamiGetRes() {}

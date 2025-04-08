@@ -28,3 +28,7 @@ type RegisterPostRes interface {
 type UserLoginGetRes interface {
 	userLoginGetRes()
 }
+
+type WhoamiGetRes interface {
+	whoamiGetRes()
+}

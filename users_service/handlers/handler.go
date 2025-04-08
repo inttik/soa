@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	jwttoken "users/internal/jwt_token"
-	pass "users/internal/passhandler"
+	pass "users/internal/pass_handler"
 	storage "users/internal/storage_manager"
 	"users/oas"
 
@@ -103,6 +103,19 @@ func (s *userService) LoginPost(ctx context.Context, req *oas.LoginUserRequest) 
 	}
 
 	return &resp, nil
+}
+
+func (s *userService) WhoamiGet(ctx context.Context) (oas.WhoamiGetRes, error) {
+	userMetadata := ctx.Value(UserMetadataKey)
+	switch u := userMetadata.(type) {
+	default:
+		return &oas.WhoamiGetForbidden{Data: strings.NewReader("unauthorized")}, nil
+	case jwttoken.UserMetadata:
+		return &oas.WhoamiGetOK{
+			UserID: oas.UserId(u.UserId),
+			IsRoot: oas.RootFlag(u.Root),
+		}, nil
+	}
 }
 
 func (s *userService) UserLoginGet(ctx context.Context, params oas.UserLoginGetParams) (oas.UserLoginGetRes, error) {

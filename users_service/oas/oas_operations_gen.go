@@ -13,4 +13,5 @@ const (
 	ProfileUserIDPostOperation OperationName = "ProfileUserIDPost"
 	RegisterPostOperation      OperationName = "RegisterPost"
 	UserLoginGetOperation      OperationName = "UserLoginGet"
+	WhoamiGetOperation         OperationName = "WhoamiGet"
 )
