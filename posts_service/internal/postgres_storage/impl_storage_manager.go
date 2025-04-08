@@ -20,7 +20,7 @@ func (ps *postgresStorage) CreatePost(req *posts_grpc.CreatePostRequest) (*posts
 		Title:       req.Title,
 		Content:     req.Content,
 		IsPrivate:   req.IsPrivate,
-		Tags:        nil,
+		Tags:        req.Tags,
 		PublishDate: time.Now(),
 		LastModify:  time.Now(),
 	}
