@@ -937,6 +937,222 @@ func (x *ListPostsResponse) GetError() string {
 	return ""
 }
 
+type LikePostRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Actor         *Actor                 `protobuf:"bytes,2,opt,name=actor,proto3" json:"actor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikePostRequest) Reset() {
+	*x = LikePostRequest{}
+	mi := &file_posts_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikePostRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikePostRequest) ProtoMessage() {}
+
+func (x *LikePostRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_posts_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikePostRequest.ProtoReflect.Descriptor instead.
+func (*LikePostRequest) Descriptor() ([]byte, []int) {
+	return file_posts_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *LikePostRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *LikePostRequest) GetActor() *Actor {
+	if x != nil {
+		return x.Actor
+	}
+	return nil
+}
+
+type LikePostResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          Code                   `protobuf:"varint,1,opt,name=code,proto3,enum=posts.Code" json:"code,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LikePostResponse) Reset() {
+	*x = LikePostResponse{}
+	mi := &file_posts_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LikePostResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LikePostResponse) ProtoMessage() {}
+
+func (x *LikePostResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_posts_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LikePostResponse.ProtoReflect.Descriptor instead.
+func (*LikePostResponse) Descriptor() ([]byte, []int) {
+	return file_posts_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *LikePostResponse) GetCode() Code {
+	if x != nil {
+		return x.Code
+	}
+	return Code_Bad
+}
+
+func (x *LikePostResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+type CommentPostRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
+	Actor         *Actor                 `protobuf:"bytes,3,opt,name=actor,proto3" json:"actor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommentPostRequest) Reset() {
+	*x = CommentPostRequest{}
+	mi := &file_posts_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommentPostRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommentPostRequest) ProtoMessage() {}
+
+func (x *CommentPostRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_posts_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommentPostRequest.ProtoReflect.Descriptor instead.
+func (*CommentPostRequest) Descriptor() ([]byte, []int) {
+	return file_posts_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *CommentPostRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CommentPostRequest) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *CommentPostRequest) GetActor() *Actor {
+	if x != nil {
+		return x.Actor
+	}
+	return nil
+}
+
+type CommentPostResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          Code                   `protobuf:"varint,1,opt,name=code,proto3,enum=posts.Code" json:"code,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommentPostResponse) Reset() {
+	*x = CommentPostResponse{}
+	mi := &file_posts_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommentPostResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommentPostResponse) ProtoMessage() {}
+
+func (x *CommentPostResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_posts_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommentPostResponse.ProtoReflect.Descriptor instead.
+func (*CommentPostResponse) Descriptor() ([]byte, []int) {
+	return file_posts_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CommentPostResponse) GetCode() Code {
+	if x != nil {
+		return x.Code
+	}
+	return Code_Bad
+}
+
+func (x *CommentPostResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 var File_posts_proto protoreflect.FileDescriptor
 
 const file_posts_proto_rawDesc = "" +
@@ -1012,14 +1228,27 @@ const file_posts_proto_rawDesc = "" +
 	"\x04from\x18\x03 \x01(\rR\x04from\x12\x0e\n" +
 	"\x02to\x18\x04 \x01(\rR\x02to\x12\x14\n" +
 	"\x05total\x18\x05 \x01(\rR\x05total\x12\x14\n" +
-	"\x05error\x18\x06 \x01(\tR\x05error*H\n" +
+	"\x05error\x18\x06 \x01(\tR\x05error\"E\n" +
+	"\x0fLikePostRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
+	"\x05actor\x18\x02 \x01(\v2\f.posts.ActorR\x05actor\"I\n" +
+	"\x10LikePostResponse\x12\x1f\n" +
+	"\x04code\x18\x01 \x01(\x0e2\v.posts.CodeR\x04code\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\"\\\n" +
+	"\x12CommentPostRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\x12\"\n" +
+	"\x05actor\x18\x03 \x01(\v2\f.posts.ActorR\x05actor\"L\n" +
+	"\x13CommentPostResponse\x12\x1f\n" +
+	"\x04code\x18\x01 \x01(\x0e2\v.posts.CodeR\x04code\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error*H\n" +
 	"\x04Code\x12\a\n" +
 	"\x03Bad\x10\x00\x12\a\n" +
 	"\x02Ok\x10\xc8\x01\x12\x0f\n" +
 	"\n" +
 	"BadRequest\x10\x90\x03\x12\x0e\n" +
 	"\tForbidden\x10\x93\x03\x12\r\n" +
-	"\bNotFound\x10\x94\x032\xd0\x02\n" +
+	"\bNotFound\x10\x94\x032\xd3\x03\n" +
 	"\vPostService\x12A\n" +
 	"\n" +
 	"CreatePost\x12\x18.posts.CreatePostRequest\x1a\x19.posts.CreatePostResponse\x12A\n" +
@@ -1028,7 +1257,9 @@ const file_posts_proto_rawDesc = "" +
 	"\n" +
 	"DeletePost\x12\x18.posts.DeletePostRequest\x1a\x19.posts.DeletePostResponse\x128\n" +
 	"\aGetPost\x12\x15.posts.GetPostRequest\x1a\x16.posts.GetPostResponse\x12>\n" +
-	"\tListPosts\x12\x17.posts.ListPostsRequest\x1a\x18.posts.ListPostsResponseB\x0fZ\r./;posts_grpcb\x06proto3"
+	"\tListPosts\x12\x17.posts.ListPostsRequest\x1a\x18.posts.ListPostsResponse\x12;\n" +
+	"\bLikePost\x12\x16.posts.LikePostRequest\x1a\x17.posts.LikePostResponse\x12D\n" +
+	"\vCommentPost\x12\x19.posts.CommentPostRequest\x1a\x1a.posts.CommentPostResponseB\x0fZ\r./;posts_grpcb\x06proto3"
 
 var (
 	file_posts_proto_rawDescOnce sync.Once
@@ -1043,7 +1274,7 @@ func file_posts_proto_rawDescGZIP() []byte {
 }
 
 var file_posts_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_posts_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_posts_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_posts_proto_goTypes = []any{
 	(Code)(0),                   // 0: posts.Code
 	(*Post)(nil),                // 1: posts.Post
@@ -1059,11 +1290,15 @@ var file_posts_proto_goTypes = []any{
 	(*GetPostResponse)(nil),     // 11: posts.GetPostResponse
 	(*ListPostsRequest)(nil),    // 12: posts.ListPostsRequest
 	(*ListPostsResponse)(nil),   // 13: posts.ListPostsResponse
-	(*timestamp.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*LikePostRequest)(nil),     // 14: posts.LikePostRequest
+	(*LikePostResponse)(nil),    // 15: posts.LikePostResponse
+	(*CommentPostRequest)(nil),  // 16: posts.CommentPostRequest
+	(*CommentPostResponse)(nil), // 17: posts.CommentPostResponse
+	(*timestamp.Timestamp)(nil), // 18: google.protobuf.Timestamp
 }
 var file_posts_proto_depIdxs = []int32{
-	14, // 0: posts.Post.publish_date:type_name -> google.protobuf.Timestamp
-	14, // 1: posts.Post.last_modify:type_name -> google.protobuf.Timestamp
+	18, // 0: posts.Post.publish_date:type_name -> google.protobuf.Timestamp
+	18, // 1: posts.Post.last_modify:type_name -> google.protobuf.Timestamp
 	3,  // 2: posts.CreatePostRequest.actor:type_name -> posts.Actor
 	0,  // 3: posts.CreatePostResponse.code:type_name -> posts.Code
 	1,  // 4: posts.CreatePostResponse.post:type_name -> posts.Post
@@ -1079,21 +1314,29 @@ var file_posts_proto_depIdxs = []int32{
 	3,  // 14: posts.ListPostsRequest.actor:type_name -> posts.Actor
 	0,  // 15: posts.ListPostsResponse.code:type_name -> posts.Code
 	1,  // 16: posts.ListPostsResponse.posts:type_name -> posts.Post
-	4,  // 17: posts.PostService.CreatePost:input_type -> posts.CreatePostRequest
-	6,  // 18: posts.PostService.UpdatePost:input_type -> posts.UpdatePostRequest
-	8,  // 19: posts.PostService.DeletePost:input_type -> posts.DeletePostRequest
-	10, // 20: posts.PostService.GetPost:input_type -> posts.GetPostRequest
-	12, // 21: posts.PostService.ListPosts:input_type -> posts.ListPostsRequest
-	5,  // 22: posts.PostService.CreatePost:output_type -> posts.CreatePostResponse
-	7,  // 23: posts.PostService.UpdatePost:output_type -> posts.UpdatePostResponse
-	9,  // 24: posts.PostService.DeletePost:output_type -> posts.DeletePostResponse
-	11, // 25: posts.PostService.GetPost:output_type -> posts.GetPostResponse
-	13, // 26: posts.PostService.ListPosts:output_type -> posts.ListPostsResponse
-	22, // [22:27] is the sub-list for method output_type
-	17, // [17:22] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	3,  // 17: posts.LikePostRequest.actor:type_name -> posts.Actor
+	0,  // 18: posts.LikePostResponse.code:type_name -> posts.Code
+	3,  // 19: posts.CommentPostRequest.actor:type_name -> posts.Actor
+	0,  // 20: posts.CommentPostResponse.code:type_name -> posts.Code
+	4,  // 21: posts.PostService.CreatePost:input_type -> posts.CreatePostRequest
+	6,  // 22: posts.PostService.UpdatePost:input_type -> posts.UpdatePostRequest
+	8,  // 23: posts.PostService.DeletePost:input_type -> posts.DeletePostRequest
+	10, // 24: posts.PostService.GetPost:input_type -> posts.GetPostRequest
+	12, // 25: posts.PostService.ListPosts:input_type -> posts.ListPostsRequest
+	14, // 26: posts.PostService.LikePost:input_type -> posts.LikePostRequest
+	16, // 27: posts.PostService.CommentPost:input_type -> posts.CommentPostRequest
+	5,  // 28: posts.PostService.CreatePost:output_type -> posts.CreatePostResponse
+	7,  // 29: posts.PostService.UpdatePost:output_type -> posts.UpdatePostResponse
+	9,  // 30: posts.PostService.DeletePost:output_type -> posts.DeletePostResponse
+	11, // 31: posts.PostService.GetPost:output_type -> posts.GetPostResponse
+	13, // 32: posts.PostService.ListPosts:output_type -> posts.ListPostsResponse
+	15, // 33: posts.PostService.LikePost:output_type -> posts.LikePostResponse
+	17, // 34: posts.PostService.CommentPost:output_type -> posts.CommentPostResponse
+	28, // [28:35] is the sub-list for method output_type
+	21, // [21:28] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_posts_proto_init() }
@@ -1107,7 +1350,7 @@ func file_posts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_posts_proto_rawDesc), len(file_posts_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

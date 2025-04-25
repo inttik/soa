@@ -47,6 +47,8 @@ func NewPostsHandler(router *chi.Mux) PostsHandler {
 		r.Delete("/posts/{post_id}", h.deletePost)
 		r.Get("/posts/{post_id}", h.getPost)
 		r.Get("/feed", h.getFeed)
+		r.Put("/like/{post_id}", h.likePost)
+		r.Put("/comment/{post_id}", h.commentPost)
 	})
 
 	return h
@@ -317,6 +319,94 @@ func (h *PostsHandler) getFeed(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	http.Error(w, "Bad return code. "+resp.Error, http.StatusInternalServerError)
+	return
+}
+
+func (h *PostsHandler) likePost(w http.ResponseWriter, r *http.Request) {
+	userInfo, ok := r.Context().Value("userInfo").(*userInfo)
+	if !ok {
+		log.Fatal("Has no user info")
+	}
+
+	var request posts_grpc.LikePostRequest
+
+	request.Id = chi.URLParam(r, "post_id")
+
+	request.Actor = &posts_grpc.Actor{}
+	request.Actor.UserId = userInfo.UserId
+	request.Actor.IsRoot = userInfo.IsRoot
+
+	resp, err := h.rpcClient.LikePost(r.Context(), &request)
+	if err != nil {
+		http.Error(w, "Server error. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	switch resp.Code {
+	case posts_grpc.Code_Bad:
+		http.Error(w, "Bad return code. "+resp.Error, http.StatusInternalServerError)
+		return
+	case posts_grpc.Code_BadRequest:
+		http.Error(w, "Bad request. "+resp.Error, http.StatusBadRequest)
+		return
+	case posts_grpc.Code_Forbidden:
+		http.Error(w, "Forbidden. "+resp.Error, http.StatusForbidden)
+		return
+	case posts_grpc.Code_NotFound:
+		http.Error(w, "Not found. "+resp.Error, http.StatusNotFound)
+		return
+	case posts_grpc.Code_Ok:
+		w.Header().Set("Content-type", "text/plain")
+		w.Write([](byte)("post liked"))
+		return
+	}
+	http.Error(w, "Bad return code. "+resp.Error, http.StatusInternalServerError)
+	return
+}
+
+func (h *PostsHandler) commentPost(w http.ResponseWriter, r *http.Request) {
+	userInfo, ok := r.Context().Value("userInfo").(*userInfo)
+	if !ok {
+		log.Fatal("Has no user info")
+	}
+
+	var request posts_grpc.CommentPostRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Request error. "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	request.Id = chi.URLParam(r, "post_id")
+
+	request.Actor = &posts_grpc.Actor{}
+	request.Actor.UserId = userInfo.UserId
+	request.Actor.IsRoot = userInfo.IsRoot
+
+	resp, err := h.rpcClient.CommentPost(r.Context(), &request)
+	if err != nil {
+		http.Error(w, "Server error. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	switch resp.Code {
+	case posts_grpc.Code_Bad:
+		http.Error(w, "Bad return code. "+resp.Error, http.StatusInternalServerError)
+		return
+	case posts_grpc.Code_BadRequest:
+		http.Error(w, "Bad request. "+resp.Error, http.StatusBadRequest)
+		return
+	case posts_grpc.Code_Forbidden:
+		http.Error(w, "Forbidden. "+resp.Error, http.StatusForbidden)
+		return
+	case posts_grpc.Code_NotFound:
+		http.Error(w, "Not found. "+resp.Error, http.StatusNotFound)
+		return
+	case posts_grpc.Code_Ok:
+		w.Header().Set("Content-type", "text/plain")
+		w.Write([](byte)("post commented"))
+		return
+	}
 	http.Error(w, "Bad return code. "+resp.Error, http.StatusInternalServerError)
 	return
 }

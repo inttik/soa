@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	kafkahandler "posts/internal/kafka_handler"
 	postgresstorage "posts/internal/postgres_storage"
 	"posts/internal/posts_grpc"
 	postsservice "posts/internal/posts_service"
@@ -17,7 +18,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := postsservice.NewServer(storage)
+	kafka, err := kafkahandler.NewKafkaHandler()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer kafka.Close()
+
+	server := postsservice.NewServer(storage, kafka)
 
 	lis, err := net.Listen("tcp", ":50001")
 	if err != nil {

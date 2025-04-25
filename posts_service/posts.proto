@@ -12,6 +12,9 @@ service PostService {
 
     rpc GetPost(GetPostRequest) returns (GetPostResponse);
     rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
+
+    rpc LikePost(LikePostRequest) returns (LikePostResponse);
+    rpc CommentPost(CommentPostRequest) returns (CommentPostResponse);
 }
 
 message Post {
@@ -109,4 +112,25 @@ message ListPostsResponse {
     uint32 to = 4;
     uint32 total = 5;
     string error = 6;
+}
+
+message LikePostRequest {
+    string id = 1;
+    Actor actor = 2;
+}
+
+message LikePostResponse {
+    Code code = 1;
+    string error = 2;
+}
+
+message CommentPostRequest {
+    string id = 1;
+    string text = 2;
+    Actor actor = 3;
+}
+
+message CommentPostResponse {
+    Code code = 1;
+    string error = 2;
 }
