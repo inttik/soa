@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	jwttoken "users/internal/jwt_token"
+	kafkahandler "users/internal/kafka_handler"
 	pass "users/internal/pass_handler"
 	storage "users/internal/storage_manager"
 	"users/oas"
@@ -15,16 +16,17 @@ import (
 )
 
 type userService struct {
-	jwt jwttoken.JWTValidator
-	sm  storage.StorageManager
+	jwt   jwttoken.JWTValidator
+	sm    storage.StorageManager
+	kafka *kafkahandler.KafkaWriter
 }
 
-func NewService(sm storage.StorageManager) (userService, error) {
+func NewService(sm storage.StorageManager, kafka *kafkahandler.KafkaWriter) (userService, error) {
 	jwt, err := jwttoken.NewHandler()
 	if err != nil {
 		return userService{}, err
 	}
-	return userService{jwt: &jwt, sm: sm}, nil
+	return userService{jwt: &jwt, sm: sm, kafka: kafka}, nil
 }
 
 func (s *userService) RegisterPost(ctx context.Context, req *oas.CreateUserRequest) (oas.RegisterPostRes, error) {
@@ -56,6 +58,11 @@ func (s *userService) RegisterPost(ctx context.Context, req *oas.CreateUserReque
 
 	if err != nil {
 		return &oas.RegisterPostBadRequest{Data: strings.NewReader(err.Error())}, nil
+	}
+
+	err = s.kafka.NewClient(newUUID)
+	if err != nil {
+		return nil, err
 	}
 
 	resp := oas.UserId(newUUID)

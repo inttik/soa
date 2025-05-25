@@ -37,7 +37,7 @@ func (s *state) setup(t *testing.T) {
 	err = storage.MakeRootUser(adminLogin, oas.PasswordString(hashedPass))
 	assert.NoErrorf(t, err, "Mock storage should have admin user")
 
-	serv, err := handlers.NewService(storage)
+	serv, err := handlers.NewService(storage, nil)
 	assert.NoErrorf(t, err, "Service should be created")
 	s.service = &serv
 

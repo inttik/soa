@@ -6,6 +6,7 @@ import (
 
 	handler "users/handlers"
 	jwttoken "users/internal/jwt_token"
+	kafkahandler "users/internal/kafka_handler"
 	passhandle "users/internal/pass_handler"
 	postgresstorage "users/internal/postgres_storage"
 	"users/oas"
@@ -36,7 +37,13 @@ func main() {
 
 	log.Println("User created")
 
-	service, err := handler.NewService(storage)
+	kafka, err := kafkahandler.NewKafkaWriter()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer kafka.Close()
+
+	service, err := handler.NewService(storage, kafka)
 	if err != nil {
 		log.Fatal(err)
 	}

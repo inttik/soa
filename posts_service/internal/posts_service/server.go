@@ -2,6 +2,7 @@ package postsservice
 
 import (
 	"context"
+	kafkahandler "posts/internal/kafka_handler"
 	grpc "posts/internal/posts_grpc"
 	storagemanager "posts/internal/storage_manager"
 
@@ -11,10 +12,11 @@ import (
 type server struct {
 	grpc.UnimplementedPostServiceServer
 	manager storagemanager.StorageManager
+	kafka   *kafkahandler.KafkaHandler
 }
 
-func NewServer(manager storagemanager.StorageManager) server {
-	return server{manager: manager}
+func NewServer(manager storagemanager.StorageManager, kafka *kafkahandler.KafkaHandler) server {
+	return server{manager: manager, kafka: kafka}
 }
 
 var (
@@ -196,6 +198,12 @@ func (s *server) GetPost(_ context.Context, req *grpc.GetPostRequest) (*grpc.Get
 			Error: "User can't get that post",
 		}, nil
 	}
+
+	err = s.kafka.NewWatch(uuid.MustParse(req.Actor.UserId), uuid.MustParse(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
 	return &grpc.GetPostResponse{Code: grpc.Code_Ok, Post: post}, nil
 }
 
@@ -222,6 +230,108 @@ func (s *server) ListPosts(_ context.Context, req *grpc.ListPostsRequest) (*grpc
 	if err != nil {
 		return nil, err
 	}
+
+	for _, p := range resp.Posts {
+		err = s.kafka.NewWatch(uuid.MustParse(req.Actor.UserId), uuid.MustParse(p.Id))
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	resp.Code = grpc.Code_Ok
 	return resp, nil
+}
+
+func LikePostBad(text string) (*grpc.LikePostResponse, error) {
+	resp := grpc.LikePostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
+	}
+	return &resp, nil
+}
+
+func (s *server) LikePost(_ context.Context, req *grpc.LikePostRequest) (*grpc.LikePostResponse, error) {
+	if req.Id == "" {
+		return LikePostBad("Post id not found")
+	}
+	if req.Actor == nil {
+		return LikePostBad("Actor not found")
+	}
+	if req.Actor.UserId == "" {
+		return LikePostBad("User id not found")
+	}
+	if check_uuid(req.Id) != nil {
+		return LikePostBad("Post id is not UUID")
+	}
+	if check_uuid(req.Actor.UserId) != nil {
+		return LikePostBad("User id is not UUID")
+	}
+
+	post, err := s.manager.GetPost(req.Id)
+	if err != nil {
+		return &grpc.LikePostResponse{
+			Code:  grpc.Code_NotFound,
+			Error: "Post not found",
+		}, nil
+	}
+	if post.IsPrivate && post.AuthorId != req.Actor.UserId && !req.Actor.IsRoot {
+		return &grpc.LikePostResponse{
+			Code:  grpc.Code_Forbidden,
+			Error: "User can't like that post",
+		}, nil
+	}
+
+	err = s.kafka.NewLike(uuid.MustParse(req.Actor.UserId), uuid.MustParse(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.LikePostResponse{Code: grpc.Code_Ok}, nil
+}
+
+func CommentPostBad(text string) (*grpc.CommentPostResponse, error) {
+	resp := grpc.CommentPostResponse{
+		Code:  grpc.Code_BadRequest,
+		Error: text,
+	}
+	return &resp, nil
+}
+
+func (s *server) CommentPost(_ context.Context, req *grpc.CommentPostRequest) (*grpc.CommentPostResponse, error) {
+	if req.Id == "" {
+		return CommentPostBad("Post id not found")
+	}
+	if req.Actor == nil {
+		return CommentPostBad("Actor not found")
+	}
+	if req.Actor.UserId == "" {
+		return CommentPostBad("User id not found")
+	}
+	if check_uuid(req.Id) != nil {
+		return CommentPostBad("Post id is not UUID")
+	}
+	if check_uuid(req.Actor.UserId) != nil {
+		return CommentPostBad("User id is not UUID")
+	}
+
+	post, err := s.manager.GetPost(req.Id)
+	if err != nil {
+		return &grpc.CommentPostResponse{
+			Code:  grpc.Code_NotFound,
+			Error: "Post not found",
+		}, nil
+	}
+	if post.IsPrivate && post.AuthorId != req.Actor.UserId && !req.Actor.IsRoot {
+		return &grpc.CommentPostResponse{
+			Code:  grpc.Code_Forbidden,
+			Error: "User can't comment on that post",
+		}, nil
+	}
+
+	err = s.kafka.NewComment(uuid.MustParse(req.Actor.UserId), uuid.MustParse(req.Id), req.Text)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.CommentPostResponse{Code: grpc.Code_Ok}, nil
 }
